@@ -17,53 +17,55 @@
   <div class="admin-wrapper">
     <aside id="sidebar"></aside>
     <main class="admin-main">
-      <div class="flex items-center justify-between mb-8">
-        <div>
-          <button id="mobile-toggle" class="lg:hidden mr-3 p-2 rounded-lg bg-dark-800/50 text-dark-400 hover:text-white">
+      <div class="page-header">
+        <div class="page-header-title">
+          <button id="sidebar-toggle" class="lg:hidden p-2 rounded-xl bg-dark-900/80 border border-dark-800/50 text-dark-400 hover:text-white hover:border-primary-500/30 transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
-          <h1 class="text-2xl font-bold text-white inline" id="page-title">New Project</h1>
+          <div>
+            <h1 class="text-2xl font-bold text-white" id="page-title">New Project</h1>
+            <p class="text-xs text-dark-500 font-mono mt-0.5">~/admin/projects/edit</p>
+          </div>
         </div>
-        <a href="projects.html" class="text-sm text-dark-400 hover:text-white transition-colors">&larr; Back to list</a>
+        <a href="projects.html" class="btn-ghost text-sm">&larr; Back to list</a>
       </div>
 
-      <form id="project-form" class="space-y-6">
+      <form id="project-form" class="space-y-6 max-w-4xl">
         <!-- Title -->
         <div>
-          <label class="form-label">Title</label>
-          <input type="text" id="title" class="form-input" placeholder="Project title" required />
+          <label class="form-label">Title *</label>
+          <input type="text" id="f-title" class="form-input" placeholder="Project title" required />
         </div>
 
         <!-- Description -->
         <div>
           <label class="form-label">Description</label>
-          <textarea id="description" class="form-textarea" rows="3" placeholder="Brief project description"></textarea>
+          <textarea id="f-description" class="form-textarea" rows="3" placeholder="Brief project description"></textarea>
         </div>
 
         <!-- Category + Link -->
         <div class="grid md:grid-cols-2 gap-6">
           <div>
             <label class="form-label">Category</label>
-            <input type="text" id="category" class="form-input" placeholder="e.g. Web App, Cloud, DevOps" />
+            <input type="text" id="f-category" class="form-input" placeholder="e.g. Web App, Cloud, DevOps" />
           </div>
           <div>
             <label class="form-label">Live Link</label>
-            <input type="url" id="link" class="form-input" placeholder="https://..." />
+            <input type="url" id="f-link" class="form-input" placeholder="https://..." />
           </div>
         </div>
 
         <!-- GitHub -->
         <div>
           <label class="form-label">GitHub URL</label>
-          <input type="url" id="github" class="form-input" placeholder="https://github.com/..." />
+          <input type="url" id="f-github" class="form-input" placeholder="https://github.com/..." />
         </div>
 
         <!-- Tech Stack Tags -->
         <div>
           <label class="form-label">Tech Stack</label>
-          <div class="tag-list" id="tech-container">
-            <input type="text" id="tech-input" class="form-input flex-1 min-w-[120px]" placeholder="Add tech + Enter" />
-          </div>
+          <input type="text" id="tech-input" class="form-input" placeholder="Type a tech and press Enter..." />
+          <div id="tech-list" class="tag-list"></div>
         </div>
 
         <!-- Gradient -->
@@ -74,13 +76,16 @@
 
         <!-- Featured -->
         <div class="flex items-center gap-3">
-          <input type="checkbox" id="featured" class="w-4 h-4 rounded accent-primary-500" />
-          <label for="featured" class="text-sm text-dark-300">Featured project</label>
+          <input type="checkbox" id="f-featured" class="w-4 h-4 rounded" />
+          <label for="f-featured" class="text-sm text-dark-300">Featured project</label>
         </div>
 
-        <div class="flex gap-3 pt-4">
-          <button type="submit" class="px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white font-semibold rounded-xl transition-colors">Save Project</button>
-          <a href="projects.html" class="px-6 py-3 bg-dark-800 hover:bg-dark-700 text-dark-300 rounded-xl transition-colors">Cancel</a>
+        <div class="flex gap-3 pt-4 border-t border-dark-800/30">
+          <button type="submit" class="btn-primary">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            Save Project
+          </button>
+          <a href="projects.html" class="btn-ghost">Cancel</a>
         </div>
       </form>
     </main>
@@ -92,11 +97,6 @@
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/admin.js"></script>
-  <script>
-    Admin.guard();
-    Admin.renderSidebar('projects');
-    Admin.initMobileToggle();
-    Admin.initProjectEdit();
-  </script>
+  <script>Admin.initProjectEdit();</script>
 </body>
 </html>

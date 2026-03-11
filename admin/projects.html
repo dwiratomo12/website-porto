@@ -17,21 +17,27 @@
   <div class="admin-wrapper">
     <aside id="sidebar"></aside>
     <main class="admin-main">
-      <div class="flex items-center justify-between mb-8">
-        <div>
-          <button id="mobile-toggle" class="lg:hidden mr-3 p-2 rounded-lg bg-dark-800/50 text-dark-400 hover:text-white">
+      <div class="page-header">
+        <div class="page-header-title">
+          <button id="sidebar-toggle" class="lg:hidden p-2 rounded-xl bg-dark-900/80 border border-dark-800/50 text-dark-400 hover:text-white hover:border-primary-500/30 transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
-          <h1 class="text-2xl font-bold text-white inline">Projects</h1>
+          <div>
+            <h1 class="text-2xl font-bold text-white">Projects</h1>
+            <p class="text-xs text-dark-500 font-mono mt-0.5">~/admin/projects</p>
+          </div>
         </div>
-        <a href="project-edit.html" class="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white text-sm font-medium rounded-xl transition-colors">+ New Project</a>
+        <a href="project-edit.html" class="btn-primary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          New Project
+        </a>
       </div>
 
-      <div class="bg-dark-900/50 border border-dark-800/50 rounded-xl overflow-hidden">
+      <div class="admin-card">
         <div class="overflow-x-auto">
-          <table class="admin-table" id="project-table">
-            <thead><tr><th>Title</th><th>Category</th><th>Featured</th><th class="text-right">Actions</th></tr></thead>
-            <tbody></tbody>
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Tech Stack</th><th>Featured</th><th>Category</th><th class="text-right">Actions</th></tr></thead>
+            <tbody id="project-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -39,25 +45,11 @@
   </div>
 
   <div class="toast-container" id="toast-container"></div>
-  <div class="modal-overlay hidden" id="confirm-modal">
-    <div class="modal-box">
-      <p id="confirm-msg" class="text-dark-200 mb-6"></p>
-      <div class="flex justify-end gap-3">
-        <button id="confirm-cancel" class="px-4 py-2 rounded-lg bg-dark-800 text-dark-300 hover:bg-dark-700">Cancel</button>
-        <button id="confirm-ok" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-500">Delete</button>
-      </div>
-    </div>
-  </div>
 
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/admin.js"></script>
-  <script>
-    Admin.guard();
-    Admin.renderSidebar('projects');
-    Admin.initMobileToggle();
-    Admin.initProjectList();
-  </script>
+  <script>Admin.initProjectList();</script>
 </body>
 </html>

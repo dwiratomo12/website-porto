@@ -17,27 +17,73 @@
   <div class="admin-wrapper">
     <aside id="sidebar"></aside>
     <main class="admin-main">
-      <div class="flex items-center justify-between mb-8">
-        <div>
-          <button id="mobile-toggle" class="lg:hidden mr-3 p-2 rounded-lg bg-dark-800/50 text-dark-400 hover:text-white">
+      <!-- Top bar -->
+      <div class="page-header">
+        <div class="page-header-title">
+          <button id="sidebar-toggle" class="lg:hidden p-2 rounded-xl bg-dark-900/80 border border-dark-800/50 text-dark-400 hover:text-white hover:border-primary-500/30 transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
-          <h1 class="text-2xl font-bold text-white inline">Dashboard</h1>
+          <div>
+            <h1 class="text-2xl font-bold text-white">Dashboard</h1>
+            <p class="text-xs text-dark-500 font-mono mt-0.5">~/admin/dashboard</p>
+          </div>
         </div>
-        <a href="../index.html" target="_blank" class="text-sm text-primary-400 hover:text-primary-300 transition-colors">View Site &rarr;</a>
+        <a href="../index.html" target="_blank" class="btn-ghost text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          View Site
+        </a>
       </div>
 
-      <div id="stats" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10"></div>
+      <!-- Stats Grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <span class="stat-icon bg-primary-500/10 text-primary-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+            </span>
+          </div>
+          <p class="text-3xl font-bold text-white font-mono" id="stat-blogs">0</p>
+          <p class="text-xs text-dark-500 mt-1 uppercase tracking-wider font-medium">Blog Posts</p>
+        </div>
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <span class="stat-icon bg-cyan-500/10 text-cyan-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </span>
+          </div>
+          <p class="text-3xl font-bold text-white font-mono" id="stat-projects">0</p>
+          <p class="text-xs text-dark-500 mt-1 uppercase tracking-wider font-medium">Projects</p>
+        </div>
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <span class="stat-icon bg-amber-500/10 text-amber-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+            </span>
+          </div>
+          <p class="text-3xl font-bold text-white font-mono" id="stat-featured-blogs">0</p>
+          <p class="text-xs text-dark-500 mt-1 uppercase tracking-wider font-medium">Featured Blogs</p>
+        </div>
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <span class="stat-icon bg-green-500/10 text-green-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+            </span>
+          </div>
+          <p class="text-3xl font-bold text-white font-mono" id="stat-featured-projects">0</p>
+          <p class="text-xs text-dark-500 mt-1 uppercase tracking-wider font-medium">Featured Projects</p>
+        </div>
+      </div>
 
-      <div class="bg-dark-900/50 border border-dark-800/50 rounded-xl overflow-hidden">
-        <div class="p-4 border-b border-dark-800/50 flex items-center justify-between">
-          <h2 class="font-semibold text-white">Recent Blog Posts</h2>
-          <a href="blog.html" class="text-sm text-primary-400 hover:text-primary-300">View All</a>
+      <!-- Recent Blog Posts -->
+      <div class="admin-card">
+        <div class="p-4 px-5 border-b border-dark-800/30 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-white">Recent Blog Posts</h2>
+          <a href="blog.html" class="text-xs text-primary-400 hover:text-primary-300 transition-colors font-medium">View All &rarr;</a>
         </div>
         <div class="overflow-x-auto">
-          <table class="admin-table" id="recent-table">
-            <thead><tr><th>Title</th><th>Category</th><th>Date</th></tr></thead>
-            <tbody></tbody>
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Category</th><th>Date</th><th class="text-right">Actions</th></tr></thead>
+            <tbody id="recent-posts"></tbody>
           </table>
         </div>
       </div>
@@ -50,11 +96,6 @@
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/admin.js"></script>
-  <script>
-    Admin.guard();
-    Admin.renderSidebar('dashboard');
-    Admin.initMobileToggle();
-    Admin.initDashboard();
-  </script>
+  <script>Admin.initDashboard();</script>
 </body>
 </html>

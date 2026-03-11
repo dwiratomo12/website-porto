@@ -81,6 +81,12 @@ const Admin = (() => {
     if (btn && sidebar) {
       btn.addEventListener('click', () => sidebar.classList.toggle('open'));
     }
+    // Close sidebar on outside click (mobile)
+    document.addEventListener('click', (e) => {
+      if (sidebar && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== btn && !btn?.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    });
   }
 
   /* ---- Logout ---- */
@@ -170,6 +176,14 @@ const Admin = (() => {
     const titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = isEdit ? 'Edit Blog Post' : 'New Blog Post';
 
+    // Populate category select
+    const catSelect = document.getElementById('f-category');
+    if (catSelect && catSelect.tagName === 'SELECT') {
+      catSelect.innerHTML = App.BLOG_CATEGORIES.map(c =>
+        `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`
+      ).join('');
+    }
+
     // Populate gradients
     const gradientPicker = document.getElementById('gradient-picker');
     if (gradientPicker) {
@@ -256,7 +270,7 @@ const Admin = (() => {
       });
     });
 
-    // Toolbar
+    // Toolbar — insert buttons
     document.querySelectorAll('.toolbar-btn[data-insert]').forEach(btn => {
       btn.addEventListener('click', () => {
         const textarea = document.getElementById('f-content');
@@ -266,6 +280,19 @@ const Admin = (() => {
         const template = btn.dataset.insert;
         let insert = template.replace('$SELECTION', selected || 'text');
         textarea.setRangeText(insert, start, end, 'end');
+        textarea.focus();
+      });
+    });
+
+    // Toolbar — wrap buttons
+    document.querySelectorAll('.toolbar-btn[data-wrap]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const textarea = document.getElementById('f-content');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selected = textarea.value.substring(start, end) || 'text';
+        const [open, close] = btn.dataset.wrap.split(',');
+        textarea.setRangeText(open + selected + close, start, end, 'end');
         textarea.focus();
       });
     });
