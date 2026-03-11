@@ -1,0 +1,10 @@
+# Local configuration (contains secrets)
+assets/js/config.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/

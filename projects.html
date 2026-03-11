@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Featured Work | Dwi Ratomo</title>
+  <meta name="description" content="Explore projects and featured work by Dwi Ratomo — Software Engineer." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-dark-950 text-dark-200 font-sans antialiased">
+
+  <div id="navbar-container"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="pt-32 pb-12 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-primary-900/20 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">Featured Work</h1>
+      <p class="text-lg text-dark-400 max-w-2xl mx-auto">A curated collection of projects I've built — from cloud infrastructure to full-stack applications.</p>
+    </div>
+  </section>
+
+  <!-- ===================== FILTER ===================== -->
+  <section class="pb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div id="filter-bar" class="flex flex-wrap justify-center gap-2"></div>
+    </div>
+  </section>
+
+  <!-- ===================== PROJECTS GRID ===================== -->
+  <section class="pb-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      <p id="empty-msg" class="hidden text-center text-dark-500 py-12">No projects matched the selected filter.</p>
+    </div>
+  </section>
+
+  <div id="footer-container"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    Components.render('#navbar-container', Components.navbar('projects'));
+    Components.render('#footer-container', Components.footer());
+
+    const allProjects = App.project.getAll();
+
+    // Collect unique categories
+    const cats = [...new Set(allProjects.map(p => p.category).filter(Boolean))];
+
+    // Render filter bar
+    const filterBar = document.getElementById('filter-bar');
+    const btns = ['all', ...cats];
+    filterBar.innerHTML = btns.map(c =>
+      `<button data-cat="${c}" class="filter-btn px-4 py-2 rounded-full text-sm font-medium transition-all ${c === 'all' ? 'bg-primary-600 text-white' : 'bg-dark-800/50 text-dark-400 hover:bg-dark-700/50 hover:text-white'} capitalize">${c}</button>`
+    ).join('');
+
+    function renderProjects(filter) {
+      const grid = document.getElementById('projects-grid');
+      const msg = document.getElementById('empty-msg');
+      const list = filter === 'all' ? allProjects : allProjects.filter(p => p.category === filter);
+      if (list.length) {
+        grid.innerHTML = list.map(p => Components.projectCard(p)).join('');
+        msg.classList.add('hidden');
+      } else {
+        grid.innerHTML = '';
+        msg.classList.remove('hidden');
+      }
+    }
+
+    filterBar.addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      filterBar.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-primary-600', 'text-white');
+        b.classList.add('bg-dark-800/50', 'text-dark-400');
+      });
+      btn.classList.add('bg-primary-600', 'text-white');
+      btn.classList.remove('bg-dark-800/50', 'text-dark-400');
+      renderProjects(btn.dataset.cat);
+    });
+
+    renderProjects('all');
+  </script>
+</body>
+</html>

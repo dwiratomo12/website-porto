@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Project | Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+<body class="bg-dark-950 text-dark-200 font-sans antialiased">
+
+  <div class="admin-wrapper">
+    <aside id="sidebar"></aside>
+    <main class="admin-main">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <button id="mobile-toggle" class="lg:hidden mr-3 p-2 rounded-lg bg-dark-800/50 text-dark-400 hover:text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <h1 class="text-2xl font-bold text-white inline" id="page-title">New Project</h1>
+        </div>
+        <a href="projects.html" class="text-sm text-dark-400 hover:text-white transition-colors">&larr; Back to list</a>
+      </div>
+
+      <form id="project-form" class="space-y-6">
+        <!-- Title -->
+        <div>
+          <label class="form-label">Title</label>
+          <input type="text" id="title" class="form-input" placeholder="Project title" required />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="form-label">Description</label>
+          <textarea id="description" class="form-textarea" rows="3" placeholder="Brief project description"></textarea>
+        </div>
+
+        <!-- Category + Link -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="form-label">Category</label>
+            <input type="text" id="category" class="form-input" placeholder="e.g. Web App, Cloud, DevOps" />
+          </div>
+          <div>
+            <label class="form-label">Live Link</label>
+            <input type="url" id="link" class="form-input" placeholder="https://..." />
+          </div>
+        </div>
+
+        <!-- GitHub -->
+        <div>
+          <label class="form-label">GitHub URL</label>
+          <input type="url" id="github" class="form-input" placeholder="https://github.com/..." />
+        </div>
+
+        <!-- Tech Stack Tags -->
+        <div>
+          <label class="form-label">Tech Stack</label>
+          <div class="tag-list" id="tech-container">
+            <input type="text" id="tech-input" class="form-input flex-1 min-w-[120px]" placeholder="Add tech + Enter" />
+          </div>
+        </div>
+
+        <!-- Gradient -->
+        <div>
+          <label class="form-label">Cover Gradient</label>
+          <div id="gradient-picker" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Featured -->
+        <div class="flex items-center gap-3">
+          <input type="checkbox" id="featured" class="w-4 h-4 rounded accent-primary-500" />
+          <label for="featured" class="text-sm text-dark-300">Featured project</label>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="submit" class="px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white font-semibold rounded-xl transition-colors">Save Project</button>
+          <a href="projects.html" class="px-6 py-3 bg-dark-800 hover:bg-dark-700 text-dark-300 rounded-xl transition-colors">Cancel</a>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    Admin.guard();
+    Admin.renderSidebar('projects');
+    Admin.initMobileToggle();
+    Admin.initProjectEdit();
+  </script>
+</body>
+</html>
