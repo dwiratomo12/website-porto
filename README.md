@@ -167,6 +167,46 @@ Modify the seed arrays in `assets/js/app.js` to replace default blog posts and p
 
 ---
 
+## 🚀 Auto Deploy Ke VPS (GitHub Actions)
+
+Workflow sudah ditambahkan di `.github/workflows/deploy-vps.yml`.
+
+Setiap ada push ke branch `main` atau `master`, GitHub Actions akan SSH ke VPS lalu menjalankan `git pull` pada folder project.
+
+### 1) Tambahkan GitHub Secrets
+
+Masuk ke: **GitHub Repo → Settings → Secrets and variables → Actions → New repository secret**
+
+Tambahkan secrets berikut:
+
+- `VPS_HOST` = IP/domain VPS
+- `VPS_PORT` = port SSH (biasanya `22`)
+- `VPS_USERNAME` = user SSH (misalnya `root` atau `deploy`)
+- `VPS_SSH_KEY` = private key SSH (isi penuh, termasuk baris `BEGIN`/`END`)
+- `VPS_APP_PATH` = path folder project di VPS (contoh `/var/www/website-porto`)
+- `VPS_FINGERPRINT` (opsional tapi direkomendasikan) = SSH host key fingerprint VPS
+
+### 2) One-time setup di VPS
+
+Clone repository sekali di VPS dan pastikan branch target tersedia:
+
+```bash
+cd /var/www
+git clone <REPO_URL> website-porto
+cd website-porto
+git checkout main
+```
+
+### 3) Validasi
+
+- Push commit ke `main`
+- Buka tab **Actions** di GitHub
+- Pastikan workflow **Deploy To VPS** sukses
+
+> Catatan: workflow ini memang menjalankan `git pull` remote (sesuai kebutuhan kamu), bukan rsync/scp upload file.
+
+---
+
 ## 📄 License
 
 This project is open-source and free to use for personal portfolio purposes.

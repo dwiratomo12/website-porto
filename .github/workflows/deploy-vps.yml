@@ -1,0 +1,47 @@
+name: Deploy To VPS
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          fingerprint: ${{ secrets.VPS_FINGERPRINT }}
+          script_stop: true
+          script: |
+            set -e
+            cd "${{ secrets.VPS_APP_PATH }}"
+
+            if [ ! -d .git ]; then
+              echo "ERROR: VPS_APP_PATH is not a git repository."
+              exit 1
+            fi
+
+            BRANCH="${{ github.ref_name }}"
+            git fetch origin "$BRANCH"
+
+            if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+              git checkout "$BRANCH"
+            else
+              git checkout -b "$BRANCH" "origin/$BRANCH"
+            fi
+
+            git pull origin "$BRANCH"
+
+            echo "Deployment completed on branch: $BRANCH"
