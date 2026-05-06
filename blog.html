@@ -53,44 +53,46 @@
   <script src="assets/js/components.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
-    Components.render('#navbar-container', Components.navbar('blog'));
-    Components.render('#footer-container', Components.footer());
+    App.init().then(() => {
+      Components.render('#navbar-container', Components.navbar('blog'));
+      Components.render('#footer-container', Components.footer());
 
-    // Build category filter buttons
-    const filterContainer = document.getElementById('category-filter');
-    App.BLOG_CATEGORIES.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = 'blog-tag';
-      btn.dataset.category = cat;
-      btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-      filterContainer.appendChild(btn);
-    });
+      // Build category filter buttons
+      const filterContainer = document.getElementById('category-filter');
+      App.BLOG_CATEGORIES.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'blog-tag';
+        btn.dataset.category = cat;
+        btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        filterContainer.appendChild(btn);
+      });
 
-    // Render posts
-    let currentCategory = 'all';
-    function renderPosts() {
-      const filter = currentCategory !== 'all' ? { category: currentCategory } : undefined;
-      const posts = App.blog.getAll(filter);
-      const grid = document.getElementById('blog-grid');
-      const noMsg = document.getElementById('no-posts');
-      if (posts.length === 0) {
-        grid.innerHTML = '';
-        noMsg.classList.remove('hidden');
-      } else {
-        noMsg.classList.add('hidden');
-        grid.innerHTML = posts.map(p => Components.blogCard(p)).join('');
+      // Render posts
+      let currentCategory = 'all';
+      function renderPosts() {
+        const filter = currentCategory !== 'all' ? { category: currentCategory } : undefined;
+        const posts = App.blog.getAll(filter);
+        const grid = document.getElementById('blog-grid');
+        const noMsg = document.getElementById('no-posts');
+        if (posts.length === 0) {
+          grid.innerHTML = '';
+          noMsg.classList.remove('hidden');
+        } else {
+          noMsg.classList.add('hidden');
+          grid.innerHTML = posts.map(p => Components.blogCard(p)).join('');
+        }
       }
-    }
-    renderPosts();
-
-    // Filter click handler
-    filterContainer.addEventListener('click', e => {
-      const btn = e.target.closest('.blog-tag');
-      if (!btn) return;
-      filterContainer.querySelectorAll('.blog-tag').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentCategory = btn.dataset.category;
       renderPosts();
+
+      // Filter click handler
+      filterContainer.addEventListener('click', e => {
+        const btn = e.target.closest('.blog-tag');
+        if (!btn) return;
+        filterContainer.querySelectorAll('.blog-tag').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = btn.dataset.category;
+        renderPosts();
+      });
     });
   </script>
 </body>

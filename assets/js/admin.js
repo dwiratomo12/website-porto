@@ -98,36 +98,40 @@ const Admin = (() => {
   /* ---- Dashboard ---- */
   function initDashboard() {
     if (!guard()) return;
-    renderSidebar('dashboard');
-    initMobileToggle();
-    const blogs = App.blog.getAll();
-    const projects = App.project.getAll();
-    document.getElementById('stat-blogs').textContent = blogs.length;
-    document.getElementById('stat-projects').textContent = projects.length;
-    document.getElementById('stat-featured-blogs').textContent = blogs.filter(b => b.featured).length;
-    document.getElementById('stat-featured-projects').textContent = projects.filter(p => p.featured).length;
+    App.init().then(() => {
+      renderSidebar('dashboard');
+      initMobileToggle();
+      const blogs = App.blog.getAll();
+      const projects = App.project.getAll();
+      document.getElementById('stat-blogs').textContent = blogs.length;
+      document.getElementById('stat-projects').textContent = projects.length;
+      document.getElementById('stat-featured-blogs').textContent = blogs.filter(b => b.featured).length;
+      document.getElementById('stat-featured-projects').textContent = projects.filter(p => p.featured).length;
 
-    const recent = blogs.slice(0, 5);
-    const tbody = document.getElementById('recent-posts');
-    if (tbody) {
-      tbody.innerHTML = recent.map(p => `
-        <tr>
-          <td class="font-medium text-white">${App.escapeHtml(p.title)}</td>
-          <td><span class="badge badge-primary">${App.escapeHtml(p.category)}</span></td>
-          <td>${App.formatDate(p.publishDate)}</td>
-          <td>
-            <a href="blog-edit.html?id=${p.id}" class="btn-icon" title="Edit"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></a>
-          </td>
-        </tr>`).join('');
-    }
+      const recent = blogs.slice(0, 5);
+      const tbody = document.getElementById('recent-posts');
+      if (tbody) {
+        tbody.innerHTML = recent.map(p => `
+          <tr>
+            <td class="font-medium text-white">${App.escapeHtml(p.title)}</td>
+            <td><span class="badge badge-primary">${App.escapeHtml(p.category)}</span></td>
+            <td>${App.formatDate(p.publishDate)}</td>
+            <td>
+              <a href="blog-edit.html?id=${p.id}" class="btn-icon" title="Edit"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></a>
+            </td>
+          </tr>`).join('');
+      }
+    });
   }
 
   /* ---- Blog List ---- */
   function initBlogList() {
     if (!guard()) return;
-    renderSidebar('blog');
-    initMobileToggle();
-    renderBlogTable();
+    App.init().then(() => {
+      renderSidebar('blog');
+      initMobileToggle();
+      renderBlogTable();
+    });
   }
 
   function renderBlogTable() {
@@ -167,180 +171,184 @@ const Admin = (() => {
   /* ---- Blog Edit ---- */
   function initBlogEdit() {
     if (!guard()) return;
-    renderSidebar('blog');
-    initMobileToggle();
+    App.init().then(() => {
+      renderSidebar('blog');
+      initMobileToggle();
 
-    const id = App.getParam('id');
-    const isEdit = !!id;
-    const form = document.getElementById('blog-form');
-    const titleEl = document.getElementById('page-title');
-    if (titleEl) titleEl.textContent = isEdit ? 'Edit Blog Post' : 'New Blog Post';
+      const id = App.getParam('id');
+      const isEdit = !!id;
+      const form = document.getElementById('blog-form');
+      const titleEl = document.getElementById('page-title');
+      if (titleEl) titleEl.textContent = isEdit ? 'Edit Blog Post' : 'New Blog Post';
 
-    // Populate category select
-    const catSelect = document.getElementById('f-category');
-    if (catSelect && catSelect.tagName === 'SELECT') {
-      catSelect.innerHTML = App.BLOG_CATEGORIES.map(c =>
-        `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`
-      ).join('');
-    }
-
-    // Populate gradients
-    const gradientPicker = document.getElementById('gradient-picker');
-    if (gradientPicker) {
-      gradientPicker.innerHTML = App.GRADIENTS.map((g, i) =>
-        `<div class="gradient-option bg-gradient-to-br ${g.value}" data-index="${i}" title="${g.label}"></div>`
-      ).join('');
-    }
-
-    let selectedGradient = 0;
-    let tags = [];
-
-    // If editing, populate form
-    if (isEdit) {
-      const post = App.blog.getById(id);
-      if (!post) { toast('Post not found', 'error'); return; }
-      document.getElementById('f-title').value = post.title;
-      document.getElementById('f-slug').value = post.slug;
-      document.getElementById('f-category').value = post.category;
-      document.getElementById('f-excerpt').value = post.excerpt;
-      document.getElementById('f-content').value = post.content;
-      document.getElementById('f-readtime').value = post.readTime || '';
-      document.getElementById('f-featured').checked = post.featured;
-      document.getElementById('f-date').value = post.publishDate || '';
-      tags = post.tags ? [...post.tags] : [];
-      selectedGradient = App.GRADIENTS.findIndex(g => g.value === post.coverGradient);
-      if (selectedGradient < 0) selectedGradient = 0;
-    } else {
-      document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
-    }
-
-    renderTags();
-    selectGradient(selectedGradient);
-
-    // Auto slug
-    document.getElementById('f-title').addEventListener('input', function () {
-      if (!isEdit) {
-        document.getElementById('f-slug').value = App.slugify(this.value);
+      // Populate category select
+      const catSelect = document.getElementById('f-category');
+      if (catSelect && catSelect.tagName === 'SELECT') {
+        catSelect.innerHTML = App.BLOG_CATEGORIES.map(c =>
+          `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`
+        ).join('');
       }
-    });
 
-    // Tags
-    document.getElementById('tag-input').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ',') {
-        e.preventDefault();
-        const val = this.value.trim().replace(/,$/,'');
-        if (val && !tags.includes(val)) {
-          tags.push(val);
-          renderTags();
-        }
-        this.value = '';
+      // Populate gradients
+      const gradientPicker = document.getElementById('gradient-picker');
+      if (gradientPicker) {
+        gradientPicker.innerHTML = App.GRADIENTS.map((g, i) =>
+          `<div class="gradient-option bg-gradient-to-br ${g.value}" data-index="${i}" title="${g.label}"></div>`
+        ).join('');
       }
-    });
 
-    function renderTags() {
-      document.getElementById('tag-list').innerHTML = tags.map(t =>
-        `<span class="tag-item">${App.escapeHtml(t)} <button type="button" onclick="this.parentElement.remove();Admin._blogRemoveTag('${App.escapeHtml(t)}')">&times;</button></span>`
-      ).join('');
-    }
+      let selectedGradient = 0;
+      let tags = [];
 
-    // Gradient picker
-    gradientPicker?.addEventListener('click', e => {
-      const opt = e.target.closest('.gradient-option');
-      if (opt) selectGradient(parseInt(opt.dataset.index));
-    });
-
-    function selectGradient(idx) {
-      selectedGradient = idx;
-      gradientPicker?.querySelectorAll('.gradient-option').forEach((el, i) => {
-        el.classList.toggle('selected', i === idx);
-      });
-    }
-
-    // Editor tabs
-    document.querySelectorAll('.editor-tab').forEach(tab => {
-      tab.addEventListener('click', function () {
-        document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        const target = this.dataset.tab;
-        document.getElementById('editor-write').classList.toggle('hidden', target !== 'write');
-        document.getElementById('editor-preview').classList.toggle('hidden', target !== 'preview');
-        if (target === 'preview') {
-          document.getElementById('preview-body').innerHTML = document.getElementById('f-content').value;
-        }
-      });
-    });
-
-    // Toolbar — insert buttons
-    document.querySelectorAll('.toolbar-btn[data-insert]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const textarea = document.getElementById('f-content');
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const selected = textarea.value.substring(start, end);
-        const template = btn.dataset.insert;
-        let insert = template.replace('$SELECTION', selected || 'text');
-        textarea.setRangeText(insert, start, end, 'end');
-        textarea.focus();
-      });
-    });
-
-    // Toolbar — wrap buttons
-    document.querySelectorAll('.toolbar-btn[data-wrap]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const textarea = document.getElementById('f-content');
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const selected = textarea.value.substring(start, end) || 'text';
-        const [open, close] = btn.dataset.wrap.split(',');
-        textarea.setRangeText(open + selected + close, start, end, 'end');
-        textarea.focus();
-      });
-    });
-
-    // Expose tags for remove
-    Admin._blogTags = tags;
-    Admin._blogRemoveTag = function (tag) {
-      const idx = tags.indexOf(tag);
-      if (idx >= 0) tags.splice(idx, 1);
-    };
-    Admin._blogRenderTags = renderTags;
-
-    // Save
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const data = {
-        title: document.getElementById('f-title').value.trim(),
-        slug: document.getElementById('f-slug').value.trim(),
-        category: document.getElementById('f-category').value,
-        excerpt: document.getElementById('f-excerpt').value.trim(),
-        content: document.getElementById('f-content').value,
-        tags: [...tags],
-        coverGradient: (App.GRADIENTS[selectedGradient] || App.GRADIENTS[0]).value,
-        readTime: document.getElementById('f-readtime').value.trim() || '5 min read',
-        featured: document.getElementById('f-featured').checked,
-        publishDate: document.getElementById('f-date').value,
-      };
-      if (!data.title || !data.slug || !data.category) {
-        toast('Please fill in all required fields', 'error');
-        return;
-      }
+      // If editing, populate form
       if (isEdit) {
-        App.blog.update(id, data);
-        toast('Blog post updated');
+        const post = App.blog.getById(id);
+        if (!post) { toast('Post not found', 'error'); return; }
+        document.getElementById('f-title').value = post.title;
+        document.getElementById('f-slug').value = post.slug;
+        document.getElementById('f-category').value = post.category;
+        document.getElementById('f-excerpt').value = post.excerpt;
+        document.getElementById('f-content').value = post.content;
+        document.getElementById('f-readtime').value = post.readTime || '';
+        document.getElementById('f-featured').checked = post.featured;
+        document.getElementById('f-date').value = post.publishDate || '';
+        tags = post.tags ? [...post.tags] : [];
+        selectedGradient = App.GRADIENTS.findIndex(g => g.value === post.coverGradient);
+        if (selectedGradient < 0) selectedGradient = 0;
       } else {
-        App.blog.create(data);
-        toast('Blog post created');
+        document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
       }
-      setTimeout(() => window.location.href = 'blog.html', 800);
+
+      renderTags();
+      selectGradient(selectedGradient);
+
+      // Auto slug
+      document.getElementById('f-title').addEventListener('input', function () {
+        if (!isEdit) {
+          document.getElementById('f-slug').value = App.slugify(this.value);
+        }
+      });
+
+      // Tags
+      document.getElementById('tag-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          const val = this.value.trim().replace(/,$/,'');
+          if (val && !tags.includes(val)) {
+            tags.push(val);
+            renderTags();
+          }
+          this.value = '';
+        }
+      });
+
+      function renderTags() {
+        document.getElementById('tag-list').innerHTML = tags.map(t =>
+          `<span class="tag-item">${App.escapeHtml(t)} <button type="button" onclick="this.parentElement.remove();Admin._blogRemoveTag('${App.escapeHtml(t)}')">&times;</button></span>`
+        ).join('');
+      }
+
+      // Gradient picker
+      gradientPicker?.addEventListener('click', e => {
+        const opt = e.target.closest('.gradient-option');
+        if (opt) selectGradient(parseInt(opt.dataset.index));
+      });
+
+      function selectGradient(idx) {
+        selectedGradient = idx;
+        gradientPicker?.querySelectorAll('.gradient-option').forEach((el, i) => {
+          el.classList.toggle('selected', i === idx);
+        });
+      }
+
+      // Editor tabs
+      document.querySelectorAll('.editor-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+          document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          const target = this.dataset.tab;
+          document.getElementById('editor-write').classList.toggle('hidden', target !== 'write');
+          document.getElementById('editor-preview').classList.toggle('hidden', target !== 'preview');
+          if (target === 'preview') {
+            document.getElementById('preview-body').innerHTML = document.getElementById('f-content').value;
+          }
+        });
+      });
+
+      // Toolbar — insert buttons
+      document.querySelectorAll('.toolbar-btn[data-insert]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const textarea = document.getElementById('f-content');
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const selected = textarea.value.substring(start, end);
+          const template = btn.dataset.insert;
+          let insert = template.replace('$SELECTION', selected || 'text');
+          textarea.setRangeText(insert, start, end, 'end');
+          textarea.focus();
+        });
+      });
+
+      // Toolbar — wrap buttons
+      document.querySelectorAll('.toolbar-btn[data-wrap]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const textarea = document.getElementById('f-content');
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const selected = textarea.value.substring(start, end) || 'text';
+          const [open, close] = btn.dataset.wrap.split(',');
+          textarea.setRangeText(open + selected + close, start, end, 'end');
+          textarea.focus();
+        });
+      });
+
+      // Expose tags for remove
+      Admin._blogTags = tags;
+      Admin._blogRemoveTag = function (tag) {
+        const idx = tags.indexOf(tag);
+        if (idx >= 0) tags.splice(idx, 1);
+      };
+      Admin._blogRenderTags = renderTags;
+
+      // Save
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = {
+          title: document.getElementById('f-title').value.trim(),
+          slug: document.getElementById('f-slug').value.trim(),
+          category: document.getElementById('f-category').value,
+          excerpt: document.getElementById('f-excerpt').value.trim(),
+          content: document.getElementById('f-content').value,
+          tags: [...tags],
+          coverGradient: (App.GRADIENTS[selectedGradient] || App.GRADIENTS[0]).value,
+          readTime: document.getElementById('f-readtime').value.trim() || '5 min read',
+          featured: document.getElementById('f-featured').checked,
+          publishDate: document.getElementById('f-date').value,
+        };
+        if (!data.title || !data.slug || !data.category) {
+          toast('Please fill in all required fields', 'error');
+          return;
+        }
+        if (isEdit) {
+          App.blog.update(id, data);
+          toast('Blog post updated');
+        } else {
+          App.blog.create(data);
+          toast('Blog post created');
+        }
+        setTimeout(() => window.location.href = 'blog.html', 800);
+      });
     });
   }
 
   /* ---- Project List ---- */
   function initProjectList() {
     if (!guard()) return;
-    renderSidebar('projects');
-    initMobileToggle();
-    renderProjectTable();
+    App.init().then(() => {
+      renderSidebar('projects');
+      initMobileToggle();
+      renderProjectTable();
+    });
   }
 
   function renderProjectTable() {
@@ -382,106 +390,108 @@ const Admin = (() => {
   /* ---- Project Edit ---- */
   function initProjectEdit() {
     if (!guard()) return;
-    renderSidebar('projects');
-    initMobileToggle();
+    App.init().then(() => {
+      renderSidebar('projects');
+      initMobileToggle();
 
-    const id = App.getParam('id');
-    const isEdit = !!id;
-    const form = document.getElementById('project-form');
-    const titleEl = document.getElementById('page-title');
-    if (titleEl) titleEl.textContent = isEdit ? 'Edit Project' : 'New Project';
+      const id = App.getParam('id');
+      const isEdit = !!id;
+      const form = document.getElementById('project-form');
+      const titleEl = document.getElementById('page-title');
+      if (titleEl) titleEl.textContent = isEdit ? 'Edit Project' : 'New Project';
 
-    // gradients
-    const gradientPicker = document.getElementById('gradient-picker');
-    if (gradientPicker) {
-      gradientPicker.innerHTML = App.GRADIENTS.map((g, i) =>
-        `<div class="gradient-option bg-gradient-to-br ${g.value}" data-index="${i}" title="${g.label}"></div>`
-      ).join('');
-    }
-
-    let selectedGradient = 0;
-    let techStack = [];
-
-    if (isEdit) {
-      const proj = App.project.getById(id);
-      if (!proj) { toast('Project not found', 'error'); return; }
-      document.getElementById('f-title').value = proj.title;
-      document.getElementById('f-description').value = proj.description;
-      document.getElementById('f-category').value = proj.category || '';
-      document.getElementById('f-link').value = proj.link || '';
-      document.getElementById('f-github').value = proj.github || '';
-      document.getElementById('f-featured').checked = proj.featured;
-      techStack = proj.techStack ? [...proj.techStack] : [];
-      selectedGradient = App.GRADIENTS.findIndex(g => g.value === proj.gradient);
-      if (selectedGradient < 0) selectedGradient = 0;
-    }
-
-    renderTech();
-    selectGradient(selectedGradient);
-
-    // Tech stack input
-    document.getElementById('tech-input').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ',') {
-        e.preventDefault();
-        const val = this.value.trim().replace(/,$/,'');
-        if (val && !techStack.includes(val)) {
-          techStack.push(val);
-          renderTech();
-        }
-        this.value = '';
+      // gradients
+      const gradientPicker = document.getElementById('gradient-picker');
+      if (gradientPicker) {
+        gradientPicker.innerHTML = App.GRADIENTS.map((g, i) =>
+          `<div class="gradient-option bg-gradient-to-br ${g.value}" data-index="${i}" title="${g.label}"></div>`
+        ).join('');
       }
-    });
 
-    function renderTech() {
-      document.getElementById('tech-list').innerHTML = techStack.map(t =>
-        `<span class="tag-item">${App.escapeHtml(t)} <button type="button" onclick="this.parentElement.remove();Admin._projRemoveTech('${App.escapeHtml(t)}')">&times;</button></span>`
-      ).join('');
-    }
+      let selectedGradient = 0;
+      let techStack = [];
 
-    Admin._projTechStack = techStack;
-    Admin._projRemoveTech = function (tech) {
-      const idx = techStack.indexOf(tech);
-      if (idx >= 0) techStack.splice(idx, 1);
-    };
-
-    // gradient
-    gradientPicker?.addEventListener('click', e => {
-      const opt = e.target.closest('.gradient-option');
-      if (opt) selectGradient(parseInt(opt.dataset.index));
-    });
-
-    function selectGradient(idx) {
-      selectedGradient = idx;
-      gradientPicker?.querySelectorAll('.gradient-option').forEach((el, i) => {
-        el.classList.toggle('selected', i === idx);
-      });
-    }
-
-    // Save
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const data = {
-        title: document.getElementById('f-title').value.trim(),
-        description: document.getElementById('f-description').value.trim(),
-        category: document.getElementById('f-category').value.trim(),
-        link: document.getElementById('f-link').value.trim(),
-        github: document.getElementById('f-github').value.trim(),
-        techStack: [...techStack],
-        gradient: (App.GRADIENTS[selectedGradient] || App.GRADIENTS[0]).value,
-        featured: document.getElementById('f-featured').checked,
-      };
-      if (!data.title || !data.description) {
-        toast('Please fill in title and description', 'error');
-        return;
-      }
       if (isEdit) {
-        App.project.update(id, data);
-        toast('Project updated');
-      } else {
-        App.project.create(data);
-        toast('Project created');
+        const proj = App.project.getById(id);
+        if (!proj) { toast('Project not found', 'error'); return; }
+        document.getElementById('f-title').value = proj.title;
+        document.getElementById('f-description').value = proj.description;
+        document.getElementById('f-category').value = proj.category || '';
+        document.getElementById('f-link').value = proj.link || '';
+        document.getElementById('f-github').value = proj.github || '';
+        document.getElementById('f-featured').checked = proj.featured;
+        techStack = proj.techStack ? [...proj.techStack] : [];
+        selectedGradient = App.GRADIENTS.findIndex(g => g.value === proj.gradient);
+        if (selectedGradient < 0) selectedGradient = 0;
       }
-      setTimeout(() => window.location.href = 'projects.html', 800);
+
+      renderTech();
+      selectGradient(selectedGradient);
+
+      // Tech stack input
+      document.getElementById('tech-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          const val = this.value.trim().replace(/,$/,'');
+          if (val && !techStack.includes(val)) {
+            techStack.push(val);
+            renderTech();
+          }
+          this.value = '';
+        }
+      });
+
+      function renderTech() {
+        document.getElementById('tech-list').innerHTML = techStack.map(t =>
+          `<span class="tag-item">${App.escapeHtml(t)} <button type="button" onclick="this.parentElement.remove();Admin._projRemoveTech('${App.escapeHtml(t)}')">&times;</button></span>`
+        ).join('');
+      }
+
+      Admin._projTechStack = techStack;
+      Admin._projRemoveTech = function (tech) {
+        const idx = techStack.indexOf(tech);
+        if (idx >= 0) techStack.splice(idx, 1);
+      };
+
+      // gradient
+      gradientPicker?.addEventListener('click', e => {
+        const opt = e.target.closest('.gradient-option');
+        if (opt) selectGradient(parseInt(opt.dataset.index));
+      });
+
+      function selectGradient(idx) {
+        selectedGradient = idx;
+        gradientPicker?.querySelectorAll('.gradient-option').forEach((el, i) => {
+          el.classList.toggle('selected', i === idx);
+        });
+      }
+
+      // Save
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = {
+          title: document.getElementById('f-title').value.trim(),
+          description: document.getElementById('f-description').value.trim(),
+          category: document.getElementById('f-category').value.trim(),
+          link: document.getElementById('f-link').value.trim(),
+          github: document.getElementById('f-github').value.trim(),
+          techStack: [...techStack],
+          gradient: (App.GRADIENTS[selectedGradient] || App.GRADIENTS[0]).value,
+          featured: document.getElementById('f-featured').checked,
+        };
+        if (!data.title || !data.description) {
+          toast('Please fill in title and description', 'error');
+          return;
+        }
+        if (isEdit) {
+          App.project.update(id, data);
+          toast('Project updated');
+        } else {
+          App.project.create(data);
+          toast('Project created');
+        }
+        setTimeout(() => window.location.href = 'projects.html', 800);
+      });
     });
   }
 

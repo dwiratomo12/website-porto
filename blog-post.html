@@ -57,45 +57,47 @@
   <script src="assets/js/components.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
-    Components.render('#navbar-container', Components.navbar('blog'));
-    Components.render('#footer-container', Components.footer());
+    App.init().then(() => {
+      Components.render('#navbar-container', Components.navbar('blog'));
+      Components.render('#footer-container', Components.footer());
 
-    const postId = App.getParam('id');
-    const post = postId ? App.blog.getById(postId) : null;
+      const postId = App.getParam('id');
+      const post = postId ? App.blog.getById(postId) : null;
 
-    if (post) {
-      document.title = post.title + ' | Dwi Ratomo';
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.content = post.excerpt;
+      if (post) {
+        document.title = post.title + ' | Dwi Ratomo';
+        const meta = document.querySelector('meta[name="description"]');
+        if (meta) meta.content = post.excerpt;
 
-      const cc = App.CATEGORY_COLORS[post.category] || 'primary';
+        const cc = App.CATEGORY_COLORS[post.category] || 'primary';
 
-      document.getElementById('article-header').innerHTML = `
-        <div class="inline-block px-3 py-1 bg-${cc}-500/20 rounded-full text-${cc}-300 text-sm font-medium capitalize mb-4">${App.escapeHtml(post.category)}</div>
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">${App.escapeHtml(post.title)}</h1>
-        <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-dark-400">
-          <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>${App.escapeHtml(post.author)}</span>
-          <span class="w-1 h-1 rounded-full bg-dark-600"></span>
-          <span>${App.formatDate(post.publishDate)}</span>
-          <span class="w-1 h-1 rounded-full bg-dark-600"></span>
-          <span>${App.escapeHtml(post.readTime)}</span>
-        </div>
-      `;
+        document.getElementById('article-header').innerHTML = `
+          <div class="inline-block px-3 py-1 bg-${cc}-500/20 rounded-full text-${cc}-300 text-sm font-medium capitalize mb-4">${App.escapeHtml(post.category)}</div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">${App.escapeHtml(post.title)}</h1>
+          <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-dark-400">
+            <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>${App.escapeHtml(post.author)}</span>
+            <span class="w-1 h-1 rounded-full bg-dark-600"></span>
+            <span>${App.formatDate(post.publishDate)}</span>
+            <span class="w-1 h-1 rounded-full bg-dark-600"></span>
+            <span>${App.escapeHtml(post.readTime)}</span>
+          </div>
+        `;
 
-      document.getElementById('article-content').innerHTML = post.content;
+        document.getElementById('article-content').innerHTML = post.content;
 
-      if (post.tags && post.tags.length) {
-        document.getElementById('article-tags').innerHTML =
-          '<div class="flex flex-wrap gap-2">' +
-          post.tags.map(t => `<span class="px-3 py-1 bg-dark-800/50 border border-dark-700/50 rounded-full text-xs text-dark-400">${App.escapeHtml(t)}</span>`).join('') +
-          '</div>';
+        if (post.tags && post.tags.length) {
+          document.getElementById('article-tags').innerHTML =
+            '<div class="flex flex-wrap gap-2">' +
+            post.tags.map(t => `<span class="px-3 py-1 bg-dark-800/50 border border-dark-700/50 rounded-full text-xs text-dark-400">${App.escapeHtml(t)}</span>`).join('') +
+            '</div>';
+        }
+      } else {
+        document.getElementById('article-header').innerHTML = `
+          <h1 class="text-3xl font-bold text-white mb-4">Post Not Found</h1>
+          <p class="text-dark-400">The requested blog post could not be found.</p>
+        `;
       }
-    } else {
-      document.getElementById('article-header').innerHTML = `
-        <h1 class="text-3xl font-bold text-white mb-4">Post Not Found</h1>
-        <p class="text-dark-400">The requested blog post could not be found.</p>
-      `;
-    }
+    });
   </script>
 </body>
 </html>

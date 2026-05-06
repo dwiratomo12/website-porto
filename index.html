@@ -49,6 +49,7 @@
         <script src="assets/js/tailwind-config.js"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preload" as="image" href="assets/img/DSW.png" />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
             rel="stylesheet"
@@ -270,6 +271,11 @@
                                     src="assets/img/DSW.png"
                                     alt="Profile Photo"
                                     class="w-full h-full object-cover"
+                                    width="832"
+                                    height="1248"
+                                    loading="eager"
+                                    decoding="async"
+                                    fetchpriority="high"
                                 />
                             </div>
                             <!-- Floating badges -->
@@ -1002,21 +1008,23 @@
         <script src="assets/js/components.js"></script>
         <script src="assets/js/main.js"></script>
         <script>
-            // Render shared components
-            Components.render("#navbar-container", Components.navbar("home"));
-            Components.render("#footer-container", Components.footer());
+            App.init().then(() => {
+                // Render shared components
+                Components.render("#navbar-container", Components.navbar("home"));
+                Components.render("#footer-container", Components.footer());
 
-            // Render dynamic projects (featured first 6)
-            const projects = App.project.getAll({ featured: true }).slice(0, 6);
-            document.getElementById("projects-grid").innerHTML = projects.length
-                ? projects.map((p) => Components.projectCard(p)).join("")
-                : '<p class="col-span-full text-center text-dark-500">No projects yet.</p>';
+                // Render dynamic projects (featured first 6)
+                const projects = App.project.getAll({ featured: true }).slice(0, 6);
+                document.getElementById("projects-grid").innerHTML = projects.length
+                    ? projects.map((p) => Components.projectCard(p)).join("")
+                    : '<p class="col-span-full text-center text-dark-500">No projects yet.</p>';
 
-            // Render dynamic blog posts (latest 3)
-            const blogs = App.blog.getAll().slice(0, 3);
-            document.getElementById("blog-grid").innerHTML = blogs.length
-                ? blogs.map((p) => Components.blogCard(p)).join("")
-                : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
+                // Render dynamic blog posts (latest 3)
+                const blogs = App.blog.getAll().slice(0, 3);
+                document.getElementById("blog-grid").innerHTML = blogs.length
+                    ? blogs.map((p) => Components.blogCard(p)).join("")
+                    : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
+            });
         </script>
     </body>
 </html>
