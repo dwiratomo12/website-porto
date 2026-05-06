@@ -8,3 +8,14 @@ Thumbs.db
 # Editor directories
 .vscode/
 .idea/
+
+# Node / build artifacts
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Tailwind build output (generated on VPS)
+assets/css/tailwind.css
+assets/css/tailwind.css.map

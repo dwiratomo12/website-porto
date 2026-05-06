@@ -1,0 +1,16 @@
+{
+  "name": "website-porto",
+  "version": "1.0.0",
+  "description": "A responsive personal portfolio website built with **HTML**, **Tailwind CSS**, and **Vanilla JavaScript** — featuring a full-featured admin panel for managing blog posts and projects. All data is persisted via **localStorage** (no backend required).",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i assets/css/tailwind-input.css -o assets/css/tailwind.css --minify",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.14"
+  }
+}

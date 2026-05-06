@@ -43,13 +43,18 @@ website-porto/
     ├── css/
     │   ├── style.css       # Public site styles
     │   └── admin.css       # Admin panel styles
+    │   └── tailwind.css    # Generated Tailwind build (do not commit)
+    │   └── tailwind-input.css # Tailwind input file
     ├── js/
     │   ├── app.js          # Core data store & localStorage CRUD
     │   ├── admin.js        # Admin panel logic & UI helpers
     │   ├── main.js         # Frontend animations & interactivity
     │   ├── components.js   # Reusable HTML component renderers
-    │   └── tailwind-config.js  # Tailwind CSS configuration
+    ├── data/
+    │   └── seed.json        # Seed data for blogs/projects
     └── img/                # Image assets
+
+tailwind.config.js          # Tailwind CSS configuration
 ```
 
 ---
@@ -59,7 +64,7 @@ website-porto/
 | Layer | Technology |
 |---|---|
 | Markup | HTML5 |
-| Styling | Tailwind CSS (CDN), Custom CSS |
+| Styling | Tailwind CSS (build), Custom CSS |
 | Scripting | Vanilla JavaScript (ES6+) |
 | Storage | localStorage (JSON) |
 | Icons | SVG inline icons |
@@ -70,17 +75,24 @@ website-porto/
 
 | File | Responsibility |
 |---|---|
-| `app.js` | Data layer — `App.blog.*`, `App.project.*`, `App.auth.*`, seed data, helper utilities |
+| `app.js` | Data layer — `App.blog.*`, `App.project.*`, `App.auth.*`, seed loader, helper utilities |
 | `admin.js` | Admin UI — auth guard, toast notifications, confirmation modals, form & list handlers |
 | `main.js` | Frontend — navbar scroll, mobile menu, scroll animations, skill bars, contact form |
 | `components.js` | Component renderers — `navbar`, `footer`, `blogCard`, `projectCard` |
-| `tailwind-config.js` | Tailwind custom theme/palette configuration |
+| `assets/data/seed.json` | Seed data for blogs and projects |
+| `tailwind.config.js` | Tailwind custom theme/palette configuration |
 
 ---
 
 ## ⚡ Getting Started
 
 Since this project requires no build step or server-side language, you can run it with any static file server.
+
+### Build Tailwind CSS (required after pull)
+```bash
+npm install
+npm run build:css
+```
 
 ### Option 1 — Laragon / XAMPP
 Place the project folder inside `www/` (Laragon) or `htdocs/` (XAMPP) and open:
@@ -110,7 +122,7 @@ Navigate to `/admin/login.html` dan masukkan password yang kamu set di `assets/j
 
 ## 📝 Data & Seed Content
 
-On first load, `app.js` auto-populates localStorage with:
+On first load, `assets/data/seed.json` auto-populates localStorage with:
 
 **Blog Posts (6):**
 - Building REST APIs with Spring Boot
@@ -149,12 +161,12 @@ On first load, `app.js` auto-populates localStorage with:
 Edit `index.html` to update your name, bio, skills list, and contact details.
 
 ### Profile Data
-Modify the seed arrays in `assets/js/app.js` to replace default blog posts and projects with your own.
+Modify `assets/data/seed.json` to replace default blog posts and projects with your own.
 
 ### Styling
 - Update `assets/css/style.css` for the public site
 - Update `assets/css/admin.css` for the admin panel
-- Modify `assets/js/tailwind-config.js` for custom Tailwind theme colors
+- Modify `tailwind.config.js` for custom Tailwind theme colors
 
 ---
 
