@@ -46,14 +46,16 @@
             content="https://dwiratomo.com/assets/img/DSW.png"
         />
         <link rel="stylesheet" href="assets/css/tailwind.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="preload" as="image" href="assets/img/DSW.png" />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-            rel="stylesheet"
+            rel="preload"
+            as="image"
+            href="assets/img/DSW-640.webp"
+            imagesrcset="assets/img/DSW-320.webp 320w, assets/img/DSW-640.webp 640w, assets/img/DSW-832.webp 832w"
+            imagesizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 384px"
+            type="image/webp"
         />
-        <link rel="stylesheet" href="assets/css/style.css" />
+            <link rel="stylesheet" href="assets/css/fonts.css" />
+            <link rel="stylesheet" href="assets/css/style.css" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/favicon.png" />
@@ -266,16 +268,23 @@
                             <div
                                 class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-2 border-primary-500/30 shadow-2xl shadow-primary-500/10"
                             >
-                                <img
-                                    src="assets/img/DSW.png"
-                                    alt="Profile Photo"
-                                    class="w-full h-full object-cover"
-                                    width="832"
-                                    height="1248"
-                                    loading="eager"
-                                    decoding="async"
-                                    fetchpriority="high"
-                                />
+                                <picture>
+                                    <source
+                                        type="image/webp"
+                                        srcset="assets/img/DSW-320.webp 320w, assets/img/DSW-640.webp 640w, assets/img/DSW-832.webp 832w"
+                                        sizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 384px"
+                                    />
+                                    <img
+                                        src="assets/img/DSW.png"
+                                        alt="Profile Photo"
+                                        class="w-full h-full object-cover"
+                                        width="832"
+                                        height="1248"
+                                        loading="eager"
+                                        decoding="async"
+                                        fetchpriority="high"
+                                    />
+                                </picture>
                             </div>
                             <!-- Floating badges -->
                             <div
