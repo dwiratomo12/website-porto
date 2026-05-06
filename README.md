@@ -217,6 +217,8 @@ git checkout main
 
 > Catatan: workflow ini memang menjalankan `git pull` remote (sesuai kebutuhan kamu), bukan rsync/scp upload file.
 
+> Catatan tambahan: setelah `git pull`, jalankan `npm install` lalu `npm run build:css` agar `assets/css/tailwind.css` selalu sinkron.
+
 ---
 
 ## 📄 License
