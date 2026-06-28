@@ -1032,6 +1032,10 @@
                 document.getElementById("blog-grid").innerHTML = blogs.length
                     ? blogs.map((p) => Components.blogCard(p)).join("")
                     : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
+            }).catch(err => {
+                console.error('Init failed:', err);
+                document.getElementById('projects-grid').innerHTML = '<p class="col-span-full text-center text-red-400">Error loading projects. Check console.</p>';
+                document.getElementById('blog-grid').innerHTML = '<p class="col-span-full text-center text-red-400">Error loading blogs. Check console.</p>';
             });
         </script>
     </body>
