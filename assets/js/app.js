@@ -9,7 +9,7 @@ const App = (() => {
     blogs:    'porto_blogs',
     projects: 'porto_projects',
     auth:     'porto_auth',
-    seeded:   'porto_seeded',
+    version:  'porto_version',
   };
 
   /* ---------- helpers ---------- */
@@ -174,18 +174,21 @@ const App = (() => {
 
   /* ========== INIT / SEED ========== */
   function seed() {
-    if (localStorage.getItem(KEYS.seeded)) return Promise.resolve();
     if (seedPromise) return seedPromise;
 
-    seedPromise = fetch(SEED_DATA_URL, { cache: 'force-cache' })
+    seedPromise = fetch(SEED_DATA_URL, { cache: 'no-cache' })
       .then((res) => {
         if (!res.ok) throw new Error('Seed data request failed');
         return res.json();
       })
       .then((data) => {
+        const localVersion = localStorage.getItem(KEYS.version);
+        const remoteVersion = String(data.version || '');
+        // Only re-seed if remote version changed (or local doesn't exist yet)
+        if (localVersion === remoteVersion) return;
         _set(KEYS.blogs, Array.isArray(data.blogs) ? data.blogs : []);
         _set(KEYS.projects, Array.isArray(data.projects) ? data.projects : []);
-        localStorage.setItem(KEYS.seeded, '1');
+        localStorage.setItem(KEYS.version, remoteVersion);
       })
       .catch((err) => {
         console.warn('Seed data load failed', err);
