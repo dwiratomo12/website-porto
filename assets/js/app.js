@@ -3,6 +3,12 @@
    Powered by Supabase (PostgreSQL).
    ============================================ */
 
+/* ---- Supabase client init ---- */
+const sb = window.supabase.createClient(
+  'https://vehcmczhsxoksfchjhxl.supabase.co',
+  'sb_publishable_3CRIG_t66a0Txi98VGr93Q_gh3S_62S'
+);
+
 const App = (() => {
   /* ---------- helpers ---------- */
   function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
