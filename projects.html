@@ -67,6 +67,7 @@
         const list = filter === 'all' ? allProjects : allProjects.filter(p => p.category === filter);
         if (list.length) {
           grid.innerHTML = list.map(p => Components.projectCard(p)).join('');
+          grid.querySelectorAll('.scroll-animate').forEach(el => el.classList.add('visible'));
           msg.classList.add('hidden');
         } else {
           grid.innerHTML = '';
