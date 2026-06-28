@@ -1037,6 +1037,7 @@
                 document.getElementById("blog-grid").innerHTML = blogs.length
                     ? blogs.map(function(x){return Components.blogCard(x)}).join("")
                     : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
+                document.querySelectorAll("#projects-grid .scroll-animate, #blog-grid .scroll-animate").forEach(function(el){el.classList.add("visible")});
             }).catch(function(err) {
                 console.error('Render failed:', err.message||err);
                 document.getElementById("projects-grid").innerHTML = '<p class="col-span-full text-center text-red-400">Error: '+(err.message||err)+'</p>';
