@@ -1016,26 +1016,25 @@
         <script src="assets/js/components.js"></script>
         <script src="assets/js/main.js"></script>
         <script>
-            App.init().then(async () => {
-                // Render shared components
+            App.init().then(function() {
                 Components.render("#navbar-container", Components.navbar("home"));
                 Components.render("#footer-container", Components.footer());
 
-                // Render dynamic projects (featured first 6)
-                const projects = (await App.project.getAll({ featured: true })).slice(0, 6);
-                document.getElementById("projects-grid").innerHTML = projects.length
-                    ? projects.map((p) => Components.projectCard(p)).join("")
-                    : '<p class="col-span-full text-center text-dark-500">No projects yet.</p>';
+                App.project.getAll({featured:true}).then(function(projects) {
+                    var p = projects.slice(0,6);
+                    document.getElementById("projects-grid").innerHTML = p.length
+                        ? p.map(function(x){return Components.projectCard(x)}).join("")
+                        : '<p class="col-span-full text-center text-dark-500">No projects yet.</p>';
+                }).catch(function(e){console.error("Project render:",e.message||e)});
 
-                // Render dynamic blog posts (latest 3)
-                const blogs = (await App.blog.getAll()).slice(0, 3);
-                document.getElementById("blog-grid").innerHTML = blogs.length
-                    ? blogs.map((p) => Components.blogCard(p)).join("")
-                    : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
-            }).catch(err => {
-                console.error('Init failed:', err);
-                document.getElementById('projects-grid').innerHTML = '<p class="col-span-full text-center text-red-400">Error loading projects. Check console.</p>';
-                document.getElementById('blog-grid').innerHTML = '<p class="col-span-full text-center text-red-400">Error loading blogs. Check console.</p>';
+                App.blog.getAll().then(function(blogs) {
+                    var b = blogs.slice(0,3);
+                    document.getElementById("blog-grid").innerHTML = b.length
+                        ? b.map(function(x){return Components.blogCard(x)}).join("")
+                        : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
+                }).catch(function(e){console.error("Blog render:",e.message||e)});
+            }).catch(function(err) {
+                console.error('Init failed:', err.message||err);
             });
         </script>
     </body>
