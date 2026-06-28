@@ -61,7 +61,7 @@ const App = (() => {
   /* ========== BLOG CRUD (async) ========== */
   const blog = {
     async getAll(filter) {
-      let query = supabase.from('blogs').select('*').order('publish_date', { ascending: false });
+      let query = sb.from('blogs').select('*').order('publish_date', { ascending: false });
       if (filter && filter.category && filter.category !== 'all') {
         query = query.eq('category', filter.category);
       }
@@ -73,11 +73,11 @@ const App = (() => {
       return (data || []).map(_blogFromDB);
     },
     async getById(id) {
-      const { data } = await supabase.from('blogs').select('*').eq('id', id).single();
+      const { data } = await sb.from('blogs').select('*').eq('id', id).single();
       return data ? _blogFromDB(data) : null;
     },
     async getBySlug(slug) {
-      const { data } = await supabase.from('blogs').select('*').eq('slug', slug).single();
+      const { data } = await sb.from('blogs').select('*').eq('slug', slug).single();
       return data ? _blogFromDB(data) : null;
     },
     async create(data) {
@@ -95,7 +95,7 @@ const App = (() => {
         readTime: data.readTime || '5 min read',
         featured: data.featured || false,
       };
-      const { error } = await supabase.from('blogs').insert(_blogToDB(item));
+      const { error } = await sb.from('blogs').insert(_blogToDB(item));
       if (error) throw error;
       return item;
     },
@@ -104,16 +104,16 @@ const App = (() => {
       if (!existing) return null;
       const updated = { ...existing, ...data, id };
       if (data.title && !data.slug) updated.slug = slugify(data.title);
-      const { error } = await supabase.from('blogs').update(_blogToDB(updated)).eq('id', id);
+      const { error } = await sb.from('blogs').update(_blogToDB(updated)).eq('id', id);
       if (error) throw error;
       return updated;
     },
     async delete(id) {
-      const { error } = await supabase.from('blogs').delete().eq('id', id);
+      const { error } = await sb.from('blogs').delete().eq('id', id);
       if (error) throw error;
     },
     async count() {
-      const { count } = await supabase.from('blogs').select('*', { count: 'exact', head: true });
+      const { count } = await sb.from('blogs').select('*', { count: 'exact', head: true });
       return count || 0;
     },
   };
@@ -121,7 +121,7 @@ const App = (() => {
   /* ========== PROJECT CRUD (async) ========== */
   const project = {
     async getAll(filter) {
-      let query = supabase.from('projects').select('*').order('created_at', { ascending: false });
+      let query = sb.from('projects').select('*').order('created_at', { ascending: false });
       if (filter && filter.category && filter.category !== 'all') {
         query = query.eq('category', filter.category);
       }
@@ -133,7 +133,7 @@ const App = (() => {
       return (data || []).map(_projectFromDB);
     },
     async getById(id) {
-      const { data } = await supabase.from('projects').select('*').eq('id', id).single();
+      const { data } = await sb.from('projects').select('*').eq('id', id).single();
       return data ? _projectFromDB(data) : null;
     },
     async create(data) {
@@ -148,7 +148,7 @@ const App = (() => {
         github: data.github || '',
         featured: data.featured || false,
       };
-      const { error } = await supabase.from('projects').insert(_projectToDB(item));
+      const { error } = await sb.from('projects').insert(_projectToDB(item));
       if (error) throw error;
       return item;
     },
@@ -156,16 +156,16 @@ const App = (() => {
       const existing = await project.getById(id);
       if (!existing) return null;
       const updated = { ...existing, ...data, id };
-      const { error } = await supabase.from('projects').update(_projectToDB(updated)).eq('id', id);
+      const { error } = await sb.from('projects').update(_projectToDB(updated)).eq('id', id);
       if (error) throw error;
       return updated;
     },
     async delete(id) {
-      const { error } = await supabase.from('projects').delete().eq('id', id);
+      const { error } = await sb.from('projects').delete().eq('id', id);
       if (error) throw error;
     },
     async count() {
-      const { count } = await supabase.from('projects').select('*', { count: 'exact', head: true });
+      const { count } = await sb.from('projects').select('*', { count: 'exact', head: true });
       return count || 0;
     },
   };
@@ -173,16 +173,16 @@ const App = (() => {
   /* ========== AUTH (Supabase) ========== */
   const auth = {
     async login(email, password) {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
       if (error) { console.warn('Login failed', error.message); return false; }
       return !!data?.session;
     },
     async logout() {
-      await supabase.auth.signOut();
+      await sb.auth.signOut();
       localStorage.removeItem('porto_auth');
     },
     async isLoggedIn() {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await sb.auth.getSession();
       return !!data?.session;
     },
   };
@@ -213,7 +213,7 @@ const App = (() => {
     if (_ready) return _ready;
     _ready = (async () => {
       // Test Supabase connection
-      const { error } = await supabase.from('blogs').select('id', { count: 'exact', head: true });
+      const { error } = await sb.from('blogs').select('id', { count: 'exact', head: true });
       if (error) console.warn('Supabase init check:', error.message);
     })();
     return _ready;
