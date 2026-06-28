@@ -1020,21 +1020,27 @@
                 Components.render("#navbar-container", Components.navbar("home"));
                 Components.render("#footer-container", Components.footer());
 
-                App.project.getAll({featured:true}).then(function(projects) {
-                    var p = projects.slice(0,6);
-                    document.getElementById("projects-grid").innerHTML = p.length
-                        ? p.map(function(x){return Components.projectCard(x)}).join("")
-                        : '<p class="col-span-full text-center text-dark-500">No projects yet.</p>';
-                }).catch(function(e){console.error("Project render:",e.message||e)});
+                // Show loading indicator
+                document.getElementById("projects-grid").innerHTML = '<p class="col-span-full text-center text-yellow-400">Loading projects...</p>';
+                document.getElementById("blog-grid").innerHTML = '<p class="col-span-full text-center text-yellow-400">Loading articles...</p>';
 
-                App.blog.getAll().then(function(blogs) {
-                    var b = blogs.slice(0,3);
-                    document.getElementById("blog-grid").innerHTML = b.length
-                        ? b.map(function(x){return Components.blogCard(x)}).join("")
-                        : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
-                }).catch(function(e){console.error("Blog render:",e.message||e)});
+                return Promise.all([
+                    App.project.getAll({featured:true}),
+                    App.blog.getAll()
+                ]);
+            }).then(function(results) {
+                var projects = results[0].slice(0,6);
+                var blogs = results[1].slice(0,3);
+                document.getElementById("projects-grid").innerHTML = projects.length
+                    ? projects.map(function(x){return Components.projectCard(x)}).join("")
+                    : '<p class="col-span-full text-center text-dark-500">No projects yet.</p>';
+                document.getElementById("blog-grid").innerHTML = blogs.length
+                    ? blogs.map(function(x){return Components.blogCard(x)}).join("")
+                    : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';
             }).catch(function(err) {
-                console.error('Init failed:', err.message||err);
+                console.error('Render failed:', err.message||err);
+                document.getElementById("projects-grid").innerHTML = '<p class="col-span-full text-center text-red-400">Error: '+(err.message||err)+'</p>';
+                document.getElementById("blog-grid").innerHTML = '<p class="col-span-full text-center text-red-400">Error loading data.</p>';
             });
         </script>
     </body>
