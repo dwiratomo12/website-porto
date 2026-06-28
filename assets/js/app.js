@@ -1,23 +1,10 @@
 /* ============================================
    App.js — Data Store & CRUD Operations
-   Uses localStorage for persistence.
+   Powered by Supabase (PostgreSQL).
    ============================================ */
 
 const App = (() => {
-  /* ---------- storage keys ---------- */
-  const KEYS = {
-    blogs:    'porto_blogs',
-    projects: 'porto_projects',
-    auth:     'porto_auth',
-    version:  'porto_version',
-  };
-
   /* ---------- helpers ---------- */
-  function _get(key) {
-    try { return JSON.parse(localStorage.getItem(key)) || []; }
-    catch { return []; }
-  }
-  function _set(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
   function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
   function slugify(text) { return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
   function getParam(name) { return new URLSearchParams(window.location.search).get(name); }
@@ -31,22 +18,69 @@ const App = (() => {
     return div.innerHTML;
   }
 
-  /* ========== BLOG CRUD ========== */
+  /* ---------- DB column mapping ---------- */
+  function _blogFromDB(row) {
+    return {
+      id: row.id, title: row.title, slug: row.slug,
+      excerpt: row.excerpt || '', content: row.content || '',
+      category: row.category || 'tutorial', tags: row.tags || [],
+      coverGradient: row.cover_gradient || 'from-primary-900/40 to-dark-800',
+      author: row.author || 'Dwi Ratomo',
+      publishDate: row.publish_date || '', readTime: row.read_time || '5 min read',
+      featured: row.featured || false,
+    };
+  }
+  function _blogToDB(data) {
+    return {
+      id: data.id, title: data.title, slug: data.slug,
+      excerpt: data.excerpt, content: data.content,
+      category: data.category, tags: data.tags,
+      cover_gradient: data.coverGradient, author: data.author,
+      publish_date: data.publishDate, read_time: data.readTime,
+      featured: data.featured,
+    };
+  }
+  function _projectFromDB(row) {
+    return {
+      id: row.id, title: row.title, description: row.description || '',
+      techStack: row.tech_stack || [], category: row.category || 'Web App',
+      gradient: row.gradient || 'from-primary-900/50 to-dark-800',
+      link: row.link || '#', github: row.github || '',
+      featured: row.featured || false,
+    };
+  }
+  function _projectToDB(data) {
+    return {
+      id: data.id, title: data.title, description: data.description,
+      tech_stack: data.techStack, category: data.category,
+      gradient: data.gradient, link: data.link, github: data.github,
+      featured: data.featured,
+    };
+  }
+
+  /* ========== BLOG CRUD (async) ========== */
   const blog = {
-    getAll(filter) {
-      let items = _get(KEYS.blogs).sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
+    async getAll(filter) {
+      let query = supabase.from('blogs').select('*').order('publish_date', { ascending: false });
       if (filter && filter.category && filter.category !== 'all') {
-        items = items.filter(i => i.category === filter.category);
+        query = query.eq('category', filter.category);
       }
       if (filter && filter.featured) {
-        items = items.filter(i => i.featured);
+        query = query.eq('featured', true);
       }
-      return items;
+      const { data, error } = await query;
+      if (error) { console.warn('Blog fetch failed', error); return []; }
+      return (data || []).map(_blogFromDB);
     },
-    getById(id) { return _get(KEYS.blogs).find(i => i.id === id) || null; },
-    getBySlug(slug) { return _get(KEYS.blogs).find(i => i.slug === slug) || null; },
-    create(data) {
-      const items = _get(KEYS.blogs);
+    async getById(id) {
+      const { data } = await supabase.from('blogs').select('*').eq('id', id).single();
+      return data ? _blogFromDB(data) : null;
+    },
+    async getBySlug(slug) {
+      const { data } = await supabase.from('blogs').select('*').eq('slug', slug).single();
+      return data ? _blogFromDB(data) : null;
+    },
+    async create(data) {
       const item = {
         id: generateId(),
         title: data.title,
@@ -61,41 +95,48 @@ const App = (() => {
         readTime: data.readTime || '5 min read',
         featured: data.featured || false,
       };
-      items.push(item);
-      _set(KEYS.blogs, items);
+      const { error } = await supabase.from('blogs').insert(_blogToDB(item));
+      if (error) throw error;
       return item;
     },
-    update(id, data) {
-      const items = _get(KEYS.blogs);
-      const idx = items.findIndex(i => i.id === id);
-      if (idx === -1) return null;
-      items[idx] = { ...items[idx], ...data, id };
-      if (data.title && !data.slug) items[idx].slug = slugify(data.title);
-      _set(KEYS.blogs, items);
-      return items[idx];
+    async update(id, data) {
+      const existing = await blog.getById(id);
+      if (!existing) return null;
+      const updated = { ...existing, ...data, id };
+      if (data.title && !data.slug) updated.slug = slugify(data.title);
+      const { error } = await supabase.from('blogs').update(_blogToDB(updated)).eq('id', id);
+      if (error) throw error;
+      return updated;
     },
-    delete(id) {
-      const items = _get(KEYS.blogs).filter(i => i.id !== id);
-      _set(KEYS.blogs, items);
+    async delete(id) {
+      const { error } = await supabase.from('blogs').delete().eq('id', id);
+      if (error) throw error;
     },
-    count() { return _get(KEYS.blogs).length; },
+    async count() {
+      const { count } = await supabase.from('blogs').select('*', { count: 'exact', head: true });
+      return count || 0;
+    },
   };
 
-  /* ========== PROJECT CRUD ========== */
+  /* ========== PROJECT CRUD (async) ========== */
   const project = {
-    getAll(filter) {
-      let items = _get(KEYS.projects);
+    async getAll(filter) {
+      let query = supabase.from('projects').select('*').order('created_at', { ascending: false });
       if (filter && filter.category && filter.category !== 'all') {
-        items = items.filter(i => i.category === filter.category);
+        query = query.eq('category', filter.category);
       }
       if (filter && filter.featured) {
-        items = items.filter(i => i.featured);
+        query = query.eq('featured', true);
       }
-      return items;
+      const { data, error } = await query;
+      if (error) { console.warn('Project fetch failed', error); return []; }
+      return (data || []).map(_projectFromDB);
     },
-    getById(id) { return _get(KEYS.projects).find(i => i.id === id) || null; },
-    create(data) {
-      const items = _get(KEYS.projects);
+    async getById(id) {
+      const { data } = await supabase.from('projects').select('*').eq('id', id).single();
+      return data ? _projectFromDB(data) : null;
+    },
+    async create(data) {
       const item = {
         id: generateId(),
         title: data.title,
@@ -104,55 +145,49 @@ const App = (() => {
         category: data.category || 'Web App',
         gradient: data.gradient || 'from-primary-900/50 to-dark-800',
         link: data.link || '#',
+        github: data.github || '',
         featured: data.featured || false,
       };
-      items.push(item);
-      _set(KEYS.projects, items);
+      const { error } = await supabase.from('projects').insert(_projectToDB(item));
+      if (error) throw error;
       return item;
     },
-    update(id, data) {
-      const items = _get(KEYS.projects);
-      const idx = items.findIndex(i => i.id === id);
-      if (idx === -1) return null;
-      items[idx] = { ...items[idx], ...data, id };
-      _set(KEYS.projects, items);
-      return items[idx];
+    async update(id, data) {
+      const existing = await project.getById(id);
+      if (!existing) return null;
+      const updated = { ...existing, ...data, id };
+      const { error } = await supabase.from('projects').update(_projectToDB(updated)).eq('id', id);
+      if (error) throw error;
+      return updated;
     },
-    delete(id) {
-      const items = _get(KEYS.projects).filter(i => i.id !== id);
-      _set(KEYS.projects, items);
+    async delete(id) {
+      const { error } = await supabase.from('projects').delete().eq('id', id);
+      if (error) throw error;
     },
-    count() { return _get(KEYS.projects).length; },
+    async count() {
+      const { count } = await supabase.from('projects').select('*', { count: 'exact', head: true });
+      return count || 0;
+    },
   };
 
-  /* ========== AUTH ========== */
-  const DEFAULT_PASS = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.adminPassword) ? APP_CONFIG.adminPassword : '';
+  /* ========== AUTH (Supabase) ========== */
   const auth = {
-    login(password) {
-      if (password === DEFAULT_PASS) {
-        _set(KEYS.auth, { loggedIn: true, time: Date.now() });
-        return true;
-      }
-      return false;
+    async login(email, password) {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) { console.warn('Login failed', error.message); return false; }
+      return !!data?.session;
     },
-    logout() { localStorage.removeItem(KEYS.auth); },
-    isLoggedIn() {
-      try {
-        const a = JSON.parse(localStorage.getItem(KEYS.auth));
-        return a && a.loggedIn === true;
-      } catch { return false; }
+    async logout() {
+      await supabase.auth.signOut();
+      localStorage.removeItem('porto_auth');
+    },
+    async isLoggedIn() {
+      const { data } = await supabase.auth.getSession();
+      return !!data?.session;
     },
   };
 
-  /* ========== SEED DATA (loaded lazily) ========== */
-  const inAdmin = location.pathname.includes('/admin');
-  const basePath = inAdmin ? '../' : '';
-  const SEED_DATA_URL = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.seedDataUrl)
-    ? APP_CONFIG.seedDataUrl
-    : `${basePath}assets/data/seed.json`;
-  let seedPromise = null;
-
-  /* ========== GRADIENT OPTIONS (for admin forms) ========== */
+  /* ========== GRADIENT OPTIONS ========== */
   const GRADIENTS = [
     { value: 'from-primary-900/40 to-dark-800', label: 'Indigo' },
     { value: 'from-green-900/40 to-dark-800',   label: 'Green' },
@@ -172,41 +207,22 @@ const App = (() => {
     devops: 'rose', frontend: 'cyan', backend: 'violet',
   };
 
-  /* ========== INIT / SEED ========== */
-  function seed() {
-    if (seedPromise) return seedPromise;
-
-    seedPromise = fetch(SEED_DATA_URL, { cache: 'no-cache' })
-      .then((res) => {
-        if (!res.ok) throw new Error('Seed data request failed');
-        return res.json();
-      })
-      .then((data) => {
-        const localVersion = localStorage.getItem(KEYS.version);
-        const remoteVersion = String(data.version || '');
-        // Only re-seed if remote version changed (or local doesn't exist yet)
-        if (localVersion === remoteVersion) return;
-        _set(KEYS.blogs, Array.isArray(data.blogs) ? data.blogs : []);
-        _set(KEYS.projects, Array.isArray(data.projects) ? data.projects : []);
-        localStorage.setItem(KEYS.version, remoteVersion);
-      })
-      .catch((err) => {
-        console.warn('Seed data load failed', err);
-      })
-      .finally(() => {
-        seedPromise = null;
-      });
-
-    return seedPromise;
+  /* ========== INIT ========== */
+  let _ready = null;
+  async function init() {
+    if (_ready) return _ready;
+    _ready = (async () => {
+      // Test Supabase connection
+      const { error } = await supabase.from('blogs').select('id', { count: 'exact', head: true });
+      if (error) console.warn('Supabase init check:', error.message);
+    })();
+    return _ready;
   }
-
-  function init() { return seed(); }
 
   /* ========== PUBLIC API ========== */
   return {
-    init, seed, blog, project, auth,
+    init, blog, project, auth,
     generateId, slugify, getParam, formatDate, escapeHtml,
     GRADIENTS, BLOG_CATEGORIES, CATEGORY_COLORS,
   };
 })();
-

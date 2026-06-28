@@ -40,16 +40,17 @@
 
   <div id="footer-container"></div>
 
-  <script src="assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/components.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
-    App.init().then(() => {
+    App.init().then(async () => {
       Components.render('#navbar-container', Components.navbar('projects'));
       Components.render('#footer-container', Components.footer());
 
-      const allProjects = App.project.getAll();
+      const allProjects = await App.project.getAll();
 
       // Collect unique categories
       const cats = [...new Set(allProjects.map(p => p.category).filter(Boolean))];

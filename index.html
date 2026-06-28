@@ -1011,24 +1011,25 @@
         <!-- Footer injected by Components -->
         <div id="footer-container"></div>
 
-        <script src="assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="assets/js/supabase-client.js"></script>
         <script src="assets/js/app.js"></script>
         <script src="assets/js/components.js"></script>
         <script src="assets/js/main.js"></script>
         <script>
-            App.init().then(() => {
+            App.init().then(async () => {
                 // Render shared components
                 Components.render("#navbar-container", Components.navbar("home"));
                 Components.render("#footer-container", Components.footer());
 
                 // Render dynamic projects (featured first 6)
-                const projects = App.project.getAll({ featured: true }).slice(0, 6);
+                const projects = (await App.project.getAll({ featured: true })).slice(0, 6);
                 document.getElementById("projects-grid").innerHTML = projects.length
                     ? projects.map((p) => Components.projectCard(p)).join("")
                     : '<p class="col-span-full text-center text-dark-500">No projects yet.</p>';
 
                 // Render dynamic blog posts (latest 3)
-                const blogs = App.blog.getAll().slice(0, 3);
+                const blogs = (await App.blog.getAll()).slice(0, 3);
                 document.getElementById("blog-grid").innerHTML = blogs.length
                     ? blogs.map((p) => Components.blogCard(p)).join("")
                     : '<p class="col-span-full text-center text-dark-500">No blog posts yet.</p>';

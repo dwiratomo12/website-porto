@@ -49,17 +49,18 @@
 
   <div id="footer-container"></div>
 
-  <script src="assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/components.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
-    App.init().then(() => {
+    App.init().then(async () => {
       Components.render('#navbar-container', Components.navbar('blog'));
       Components.render('#footer-container', Components.footer());
 
       const postId = App.getParam('id');
-      const post = postId ? App.blog.getById(postId) : null;
+      const post = postId ? (await App.blog.getById(postId)) : null;
 
       if (post) {
         document.title = post.title + ' | Dwi Ratomo';
