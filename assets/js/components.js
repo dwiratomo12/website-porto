@@ -77,11 +77,18 @@ const Components = (() => {
   /* ==================== BLOG CARD ==================== */
   function blogCard(post) {
     const cc = App.CATEGORY_COLORS[post.category] || 'primary';
+    // Extract first image from content as cover thumbnail
+    const coverImg = (post.content || '').match(/<img[^>]+src="([^"]+)"/);
+    const hasCover = coverImg && coverImg[1];
+    const coverHtml = hasCover
+      ? `<img src="${coverImg[1]}" alt="" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+         <div class="absolute inset-0 bg-gradient-to-t from-dark-900/80 to-transparent"></div>`
+      : `<svg class="w-12 h-12 text-${cc}-500/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>`;
     return `
     <a href="${base}blog-post.html?id=${post.id}" class="blog-card scroll-animate group" data-category="${post.category}">
       <div class="relative overflow-hidden rounded-t-xl">
-        <div class="aspect-[16/10] bg-gradient-to-br ${post.coverGradient} flex items-center justify-center">
-          <svg class="w-12 h-12 text-${cc}-500/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+        <div class="aspect-[16/10] bg-gradient-to-br ${post.coverGradient} flex items-center justify-center relative">
+          ${coverHtml}
         </div>
         <div class="absolute top-3 left-3 px-2 py-1 bg-${cc}-500/20 backdrop-blur-sm rounded-md text-xs font-medium text-${cc}-300 capitalize">${App.escapeHtml(post.category)}</div>
       </div>
