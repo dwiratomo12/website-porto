@@ -1,6 +1,30 @@
 {
-  "version": "2026-07-27T10:08:17.433+08:00",
+  "version": "2026-07-27T10:14:45.901+08:00",
   "blogs": [
+    {
+      "id": "auto-20260727-2",
+      "title": "Context Windows Are Architecture, Not Trivia",
+      "slug": "context-windows-are-architecture-not-trivia",
+      "excerpt": "Context windows shape what AI tools remember, forget, and cost. Treat them as an architectural boundary, not a model detail.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">Context windows sound like a model vendor detail: a number in a pricing table next to tokens, latency, and benchmark scores. For working engineers, they are more practical than that. The context window is the temporary memory an AI system can see while answering. It defines what evidence fits, what gets trimmed, and how expensive every request becomes. If your team is adding AI to developer tools, support flows, documentation search, or internal automation, context is not trivia. It is architecture.</p>\n<h2>Long Context Is Not Infinite Memory</h2>\n<p>A larger window helps, but it does not remove the need for design. Stuffing logs, tickets, docs, pull requests, and chat history into one prompt creates a slower and noisier system. The model may technically see everything, yet still miss the one detail that matters because the signal is buried under irrelevant tokens.</p>\n<p>The useful question is not “how much can we fit?” It is “what must be visible for this decision?” A bug triage assistant needs recent errors, deploy timestamps, changed files, and service ownership. It does not need the full incident archive. A code review assistant needs the diff, nearby conventions, and test intent. It does not need every file in the repository.</p>\n<h2>Design a Context Budget</h2>\n<p>Treat context like memory in a small process. Allocate it deliberately. Reserve room for the user request, current task state, retrieved evidence, tool results, and the final answer. When one section grows, another must shrink. That constraint forces better retrieval and clearer workflows.</p>\n<pre><code>context = [\n  system_rules,          // small and stable\n  user_goal,             // what are we doing now?\n  task_state,            // decisions already made\n  top_retrieved_docs,    // evidence, not the whole library\n  latest_tool_results,   // fresh facts beat stale summaries\n]</code></pre>\n<p>This is also where observability matters. Log which documents were retrieved, how many tokens they used, and which sources influenced the answer. When the AI fails, you need to know whether the model reasoned badly or simply never saw the right fact.</p>\n<h2>Prefer Retrieval Over Hoarding</h2>\n<p>The cleanest AI systems do not keep everything in the prompt. They retrieve the smallest useful slice when needed. That might be a search index over documentation, a database query for account state, or a file-level lookup inside a repository. Retrieval keeps prompts cheaper, answers fresher, and mistakes easier to debug.</p>\n<ul>\n<li><strong>Chunk by task</strong> — split docs around decisions and procedures, not arbitrary character counts.</li>\n<li><strong>Rank for usefulness</strong> — prefer recent, authoritative, and exact matches over broad semantic guesses.</li>\n<li><strong>Keep citations</strong> — store source paths or URLs so humans can verify the answer.</li>\n<li><strong>Summarize state</strong> — compress old conversation into decisions, open questions, and constraints.</li>\n</ul>\n<h2>Make Forgetting Explicit</h2>\n<p>Every context pipeline forgets. The safe version admits it. If a document is not retrieved, if a log window is incomplete, or if the answer depends on stale state, the system should say so. Silent forgetting is how assistants become confident and wrong.</p>\n<p>A practical pattern is to make the model state its evidence before acting: “I am using these three files and this deployment log.” That one sentence gives reviewers a cheap way to catch missing context before the tool writes code, opens a ticket, or recommends a rollback.</p>\n<h2>Conclusion</h2>\n<p>Context windows are not just bigger buckets for prompts. They are a boundary that shapes correctness, cost, latency, and trust. Start with a budget, retrieve only what the task needs, log the evidence, and make forgetting visible. The teams that get this right will not be the ones with the largest context window. They will be the ones that spend it carefully.</p>",
+      "category": "backend",
+      "tags": [
+        "AI",
+        "Architecture",
+        "Developer Tools",
+        "LLM"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-07-27",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-07-27",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260727-1",
       "title": "AI Agents Need Guardrails More Than Magic",
