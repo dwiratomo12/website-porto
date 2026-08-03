@@ -1,6 +1,30 @@
 {
-  "version": "2026-07-27T10:14:45.901+08:00",
+  "version": "2026-08-03T10:07:10.858+08:00",
   "blogs": [
+    {
+      "id": "auto-20260803-1",
+      "title": "AI Package Suggestions Need a Lock on the Door",
+      "slug": "ai-package-suggestions-need-a-lock-on-the-door",
+      "excerpt": "AI can speed up dependency work, but every suggested package deserves the same guardrails as any production supply-chain change.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p>AI coding assistants are now good enough to suggest libraries before we even know the exact shape of the problem. That is useful, but it also changes the threat model. A package name in a chat window can feel like documentation, when it is really just a guess that still has to survive normal engineering review.</p>\n<p>The recent interest around hallucinated package names and supply-chain attacks is a good reminder: dependency selection is architecture. It affects build speed, incident response, runtime safety, and future maintenance. The fix is not to ban AI suggestions. The fix is to make the door smaller and put a lock on it.</p>\n<h2>Treat Suggestions as Leads, Not Answers</h2>\n<p>When an assistant proposes a package, I treat it like a search result from a stranger. The name may be real, useful, and maintained. It may also be abandoned, typo-adjacent, or completely invented. The first job is verification, not installation.</p>\n<ul>\n  <li>Check that the package exists in the official registry.</li>\n  <li>Read the repository, not just the README badges.</li>\n  <li>Look for recent releases, issues, and maintainers.</li>\n  <li>Compare the package name against popular alternatives.</li>\n  <li>Prefer platform features or small local code when the job is tiny.</li>\n</ul>\n<h2>Make the Safe Path Boring</h2>\n<p>Teams get safer when the boring path is also the fastest path. A small allowlist for common libraries, lockfile-only installs in CI, and review rules for new dependencies catch most mistakes without adding heavy process. If adding a dependency requires one clear reason and one reviewer, people will still move quickly.</p>\n<pre><code>#!/usr/bin/env python3\nimport json\nfrom pathlib import Path\n\nallowed = {\"react\", \"typescript\", \"vite\", \"zod\", \"pytest\"}\nlock = json.loads(Path(\"package-lock.json\").read_text())\nnew = {name for name in lock.get(\"packages\", {}) if name.startswith(\"node_modules/\")}\nnew = {name.removeprefix(\"node_modules/\") for name in new}\nunknown = sorted(pkg for pkg in new if pkg.split(\"/\")[0] not in allowed)\nassert not unknown, f\"review new dependencies: {unknown}\"\n</code></pre>\n<p>This example is intentionally small. Real projects need scoped package handling and a baseline file, but the idea is the same: fail closed when a new dependency appears silently.</p>\n<h2>Ask for the Smallest Useful Dependency</h2>\n<p>The best dependency is often no dependency. Before accepting a generated install command, ask what native feature covers the same ground. The standard library may already parse the file, validate the URL, or format the date. Databases can enforce uniqueness. CSS can replace JavaScript. A reverse proxy can handle headers better than app code.</p>\n<p>This is not minimalism for its own sake. Fewer packages mean fewer licenses to track, fewer transitive updates, fewer build surprises, and fewer names an attacker can imitate.</p>\n<h2>Keep AI in the Loop, Not in Control</h2>\n<p>AI is still valuable here. Ask it to compare options, summarize maintenance signals, or draft a risk note for a pull request. Do not let it be the actor that both recommends and installs a dependency without a human-readable checkpoint.</p>\n<p>A good rule is simple: assistants may suggest, scripts may verify, reviewers approve, and CI enforces. That keeps the speed while removing the magical thinking. The result is a workflow where AI helps engineers see more options, but production still only receives choices that passed the same boring gates as everything else.</p>",
+      "category": "security",
+      "tags": [
+        "AI",
+        "Security",
+        "Supply Chain",
+        "Developer Tools"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-08-03",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-08-03",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260727-2",
       "title": "Context Windows Are Architecture, Not Trivia",
