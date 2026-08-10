@@ -1,6 +1,30 @@
 {
-  "version": "2026-08-03T10:07:10.858+08:00",
+  "version": "2026-08-10T10:00:00+08:00",
   "blogs": [
+    {
+      "id": "auto-20260810-1",
+      "title": "Small CI Guardrails Beat Big Release Fire Drills",
+      "slug": "small-ci-guardrails-beat-big-release-fire-drills",
+      "excerpt": "A few cheap CI checks can catch risky changes early, keep reviews focused, and prevent production fixes from becoming fire drills.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">The most useful engineering trend this week is not another framework or a bigger model. It is the return of boring automation. Teams are shipping faster, leaning on AI assistants, and touching more services per change. That makes continuous integration less like a test runner and more like a traffic light. If the light only turns red after production is already smoking, it is too late.</p>\n<p>Good CI guardrails are small, specific, and close to the risk. They do not try to prove the whole system correct. They catch the mistakes that humans routinely miss when a pull request looks harmless: a new dependency, a missing migration check, a secret in a fixture, or a Docker image that quietly grew by 600 MB.</p>\n<h2>Start With the Changes You Regret</h2>\n<p>The best guardrails usually come from incident notes and annoying reviews, not abstract best practices. Look at the last five fixes that interrupted normal work. If two of them share a pattern, automate that check before adding another dashboard.</p>\n<ul>\n  <li>New dependencies should be visible and reviewed.</li>\n  <li>Database migrations should have a rollback or a safe forward plan.</li>\n  <li>Public environment variables should not contain private values.</li>\n  <li>Generated files should be reproducible, not hand-edited.</li>\n  <li>Large bundles or images should fail before they reach deploy time.</li>\n</ul>\n<p>This keeps CI grounded. A check earns its place by preventing a real class of mistake, not by looking mature in a platform diagram.</p>\n<h2>Make Each Check Explain Itself</h2>\n<p>A guardrail that only says “pipeline failed” becomes noise. The fastest teams write failure messages like review comments: what changed, why it matters, and what to do next. That is especially important when AI-generated code is in the loop. The assistant may produce a plausible patch, but CI should turn hidden policy into plain feedback.</p>\n<pre><code>#!/usr/bin/env python3\nimport json\nfrom pathlib import Path\n\nbefore = json.loads(Path(\"ci/baseline-package.json\").read_text())\nafter = json.loads(Path(\"package-lock.json\").read_text())\nold = set(before.get(\"packages\", {}))\nnew = sorted(p for p in after.get(\"packages\", {}) if p not in old)\n\nif new:\n    print(\"New packages need review:\")\n    for package in new:\n        print(f\"- {package}\")\n    raise SystemExit(1)\n</code></pre>\n<p>This is intentionally plain. No service, no bot, no custom UI. A short script that fails loudly is often enough to change behavior.</p>\n<h2>Keep Guardrails Cheap</h2>\n<p>The danger is turning CI into a slow committee. Every check has a cost: runtime, maintenance, false positives, and developer attention. If a rule fails often for harmless reasons, people will learn to bypass it. Prefer checks that are deterministic, local, and easy to reproduce on a laptop.</p>\n<p>A useful rule of thumb: if a guardrail takes longer to explain than the mistake it prevents, it is probably too broad. Split it into a smaller check or move it into documentation until the pattern is clearer.</p>\n<h2>Use Humans at the Right Point</h2>\n<p>Automation should not replace judgment. It should reserve judgment for the moments that matter. CI can detect that a dependency appeared, a migration touched customer data, or an endpoint changed its response shape. A reviewer should decide whether that change is acceptable.</p>\n<p>The result is calmer delivery. Engineers spend less time hunting for familiar mistakes and more time reviewing intent. Releases stop depending on memory. AI-assisted patches become safer because the repository has its own immune system. Small guardrails will not prevent every outage, but they will turn many fire drills into ordinary pull request comments.</p>",
+      "category": "devops",
+      "tags": [
+        "CI",
+        "DevOps",
+        "Automation",
+        "Software Engineering"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-08-10",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-08-10",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260803-1",
       "title": "AI Package Suggestions Need a Lock on the Door",
