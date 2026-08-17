@@ -1,6 +1,30 @@
 {
-  "version": "2026-08-10T10:00:00+08:00",
+  "version": "2026-08-17T10:00:00+08:00",
   "blogs": [
+    {
+      "id": "auto-20260817-1",
+      "title": "Platform Engineering Starts With Better Defaults",
+      "slug": "platform-engineering-starts-with-better-defaults",
+      "excerpt": "Useful platform engineering is less about portals and more about safe defaults that make the right path the easiest path.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">Platform engineering keeps showing up in developer discussions because teams are tired of choosing between speed and consistency. The best platforms are not internal empires or catalog screenshots. They are a set of defaults that remove repeated decisions from everyday work.</p>\n<p>A good default does not hide how the system works. It gives engineers a safe starting point: logging already wired, deploys already observable, secrets handled consistently, and rollback behavior known before the first incident. That is useful whether the team is shipping a small API, a worker, or an AI-assisted feature.</p>\n<h2>Start With the Repeated Pain</h2>\n<p>The fastest way to overbuild a platform is to begin with a portal. The better starting point is a list of tasks developers repeat badly or inconsistently. If every service invents health checks, Dockerfiles, alerts, and environment handling from scratch, the organization is paying the same tax in every repository.</p>\n<ul>\n  <li>Service templates should include production logging from day one.</li>\n  <li>Deployment pipelines should make rollback visible and boring.</li>\n  <li>Secrets should have one supported path, not five examples in old wikis.</li>\n  <li>Ownership metadata should live near the code and feed incident tooling.</li>\n  <li>Local setup should fail with clear instructions, not tribal knowledge.</li>\n</ul>\n<h2>Make the Golden Path Small</h2>\n<p>A golden path works when it is narrow enough to maintain. One blessed API template is useful. Seven half-supported templates become another source of confusion. The platform team should optimize for the common case first and leave escape hatches for teams with real differences.</p>\n<pre><code>name: deploy\non:\n  push:\n    branches: [main]\n\njobs:\n  ship:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: ./scripts/test.sh\n      - run: ./scripts/build.sh\n      - run: ./scripts/deploy.sh\n</code></pre>\n<p>This pipeline is intentionally plain. The value is not the YAML. The value is that every new service can start with the same test, build, and deploy shape before adding anything special.</p>\n<h2>Prefer Defaults Over Tickets</h2>\n<p>Internal platforms often fail when every improvement becomes a request queue. If developers need to file a ticket to get a dashboard, a namespace, or a deploy token, the platform is still mostly manual labor. Better defaults turn common needs into self-service without removing review where review matters.</p>\n<p>The practical test is simple: can a new repository reach a safe first deployment without a meeting? If not, remove one approval, automate one check, or document one decision where the engineer actually sees it.</p>\n<h2>Measure Friction, Not Vanity</h2>\n<p>Portal adoption and template counts are easy to report but easy to game. Better signals are closer to developer pain: time to first deploy, number of custom pipeline forks, repeated incident causes, and how often teams bypass the supported path. Bypasses are feedback. They either reveal a missing feature or a default that is too expensive.</p>\n<p>Platform engineering is most valuable when it feels almost invisible. Engineers still own their services, but they inherit a safer baseline. The organization gets more consistent operations without asking every team to become infrastructure specialists. Better defaults are not glamorous, but they compound every week a team ships software.</p>",
+      "category": "devops",
+      "tags": [
+        "Platform Engineering",
+        "DevOps",
+        "Developer Experience",
+        "Cloud"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-08-17",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-08-17",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260810-1",
       "title": "Small CI Guardrails Beat Big Release Fire Drills",
