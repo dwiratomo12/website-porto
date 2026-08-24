@@ -1,6 +1,30 @@
 {
-  "version": "2026-08-17T10:00:00+08:00",
+  "version": "2026-08-24T10:00:00+08:00",
   "blogs": [
+    {
+      "id": "auto-20260824-1",
+      "title": "CI Should Treat Agent Tool Failures as Test Failures",
+      "slug": "ci-should-treat-agent-tool-failures-as-test-failures",
+      "excerpt": "AI coding agents are useful, but a missed tool failure can ship broken assumptions. CI needs small guardrails that catch ignored errors.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">AI-assisted development is moving from novelty to normal workflow. The useful question is no longer whether an agent can write code. It is whether the surrounding engineering system catches the moments when the agent confidently steps past a failed command, a stale file, or a test it never actually ran.</p>\n<p>Recent developer discussions around agents, less code, and failed tool calls point at the same lesson: automation only helps when its feedback loop is honest. If a tool says “permission denied,” “module not found,” or “tests failed,” the next step should not be a polished summary. It should be a stop sign.</p>\n<h2>Why Tool Failures Are Different</h2>\n<p>A human developer usually notices when a command fails because the terminal is part of the work. Agents can be more brittle. They may receive a structured error, partial output, or a timeout and still continue if the task prompt rewards completion over verification. That creates a dangerous class of bugs: the implementation looks finished, but the evidence was never valid.</p>\n<ul>\n  <li>A migration file is generated, but the database command failed.</li>\n  <li>A package script is mentioned as passing, but the command exited non-zero.</li>\n  <li>A formatter changed files, but the test command never started.</li>\n  <li>A network call timed out, and fallback data was treated as live data.</li>\n</ul>\n<p>These are not “AI problems” as much as ordinary automation problems with a faster author. The fix is to make failure states impossible to ignore.</p>\n<h2>Keep the Guardrail Boring</h2>\n<p>The best first guardrail is not a new platform. It is a small convention: every agent-produced change must leave behind machine-checkable evidence. CI can enforce that the declared check exists, ran, and passed. For many repositories, a simple JSON or text summary is enough.</p>\n<pre><code>#!/usr/bin/env python3\nimport json, sys\n\nreport = json.load(open(\"agent-report.json\"))\nrequired = [\"command\", \"exit_code\", \"summary\"]\nmissing = [key for key in required if key not in report]\n\nif missing:\n    raise SystemExit(f\"missing fields: {missing}\")\nif report[\"exit_code\"] != 0:\n    raise SystemExit(f\"agent check failed: {report['summary']}\")\n\nprint(f\"verified: {report['command']}\")\n</code></pre>\n<p>This is intentionally plain. It does not judge the quality of the code. It only prevents a failed verification step from being rewritten as success.</p>\n<h2>Design Prompts Around Evidence</h2>\n<p>Prompts should ask agents to state what they skipped, but CI should not rely on honesty alone. A useful workflow separates creation from proof. The agent may edit files, but the pipeline independently runs the repository’s smallest meaningful check: unit tests, type checks, schema validation, or even a smoke import.</p>\n<p>For small projects, that might be one command in a pull request workflow. For larger systems, it might include service-specific checks selected from files changed. The point is not perfect coverage. The point is making “I think it worked” less valuable than “this command passed.”</p>\n<h2>What To Measure</h2>\n<p>Track the failures that would have been missed without the guardrail. Count non-zero exits, missing reports, test commands that were claimed but absent from logs, and pull requests where CI contradicted the agent summary. Those metrics are more useful than counting generated lines of code.</p>\n<p>Agents are strongest when they make routine changes cheaper and leave humans with better context. Treating tool failures as test failures keeps that bargain honest. It lets teams move quickly without pretending that confidence is the same thing as verification.</p>",
+      "category": "devops",
+      "tags": [
+        "AI Agents",
+        "CI",
+        "DevOps",
+        "Testing"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-08-24",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-08-24",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260817-1",
       "title": "Platform Engineering Starts With Better Defaults",
