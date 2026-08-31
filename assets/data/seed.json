@@ -1,6 +1,30 @@
 {
-  "version": "2026-08-24T10:00:00+08:00",
+  "version": "2026-08-31T10:00:00+08:00",
   "blogs": [
+    {
+      "id": "auto-20260831-1",
+      "title": "Use AI Coding Gaps to Improve the System Around the Code",
+      "slug": "use-ai-coding-gaps-to-improve-the-system-around-the-code",
+      "excerpt": "AI coding agents create short waiting gaps. Use that time to improve tests, docs, review notes, and deployment safety instead of context switching.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">AI coding agents have changed the rhythm of software work. A developer now spends less time typing every line and more time waiting through small bursts: a test run, a refactor attempt, a dependency check, or a pull request draft. Those five-to-twenty-minute gaps look awkward at first. Used well, they become a practical advantage.</p>\n<p>The mistake is treating every gap as spare time for another tab. Context switching feels productive, but it often leaves the original change with weaker review, missing notes, and no operational polish. A better habit is to use the gap to improve the system around the code the agent is touching.</p>\n<h2>Keep the Same Problem in Focus</h2>\n<p>When an agent is working, the developer still owns the outcome. That means the most useful waiting tasks are adjacent to the same change. If the agent is modifying an API, inspect the contract. If it is writing a migration, read the rollback path. If it is generating tests, look for the one case the happy path skips.</p>\n<ul>\n  <li>Write down the acceptance check before the agent finishes.</li>\n  <li>Open the related logs, dashboards, or schema docs.</li>\n  <li>Prepare a short review note explaining the risk area.</li>\n  <li>Look for deleted assumptions in old comments or README snippets.</li>\n  <li>Decide which command will prove the change actually works.</li>\n</ul>\n<p>This keeps the human role concrete. You are not watching a progress spinner. You are narrowing the gap between generated code and shippable code.</p>\n<h2>Turn Waiting Time Into Verification</h2>\n<p>The best use of an AI gap is often a tiny verification script. It does not need a framework or a new service. It only needs to capture the thing that must remain true after the generated change lands.</p>\n<pre><code>from pathlib import Path\n\nchanged = Path(\"api/routes.py\").read_text()\nassert \"require_auth\" in changed\nassert \"debug=True\" not in changed\nprint(\"route safety checks passed\")\n</code></pre>\n<p>That kind of check is intentionally small. It will not replace the test suite, but it can catch the exact risk you were worried about while the agent was busy making the broader edit. Over time, the useful checks can graduate into real tests. The weak ones can be thrown away.</p>\n<h2>Review the Prompt, Not Just the Patch</h2>\n<p>Agent output reflects the instruction it received. During a wait, reread the prompt and ask whether it rewarded the right behavior. Did it ask for the smallest diff? Did it name the files that should not be touched? Did it require a runnable check? If not, the next iteration should fix the instruction before it fixes the code.</p>\n<p>This habit matters because AI-assisted work can make bad scope feel cheap. A broad rewrite appears quickly, but the review cost still arrives later. Better prompts keep the patch boring: fewer files, clearer constraints, and less cleanup after the fact.</p>\n<h2>Make the Handoff Easier</h2>\n<p>A good developer leaves context for the next person, even when the next person is future-you. Use the gap to draft the pull request summary, list skipped checks honestly, and name the part that deserves human attention. Reviewers should not have to reverse-engineer whether the agent ran tests or merely claimed success.</p>\n<p>AI coding gaps are not empty time. They are small review windows. Teams that use them well will ship faster without lowering their standards, because the human attention moves from typing to judgment. The code may arrive from an agent, but the engineering quality still comes from the system built around it.</p>",
+      "category": "ai",
+      "tags": [
+        "AI Agents",
+        "Developer Experience",
+        "Code Review",
+        "Productivity"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-08-31",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-08-31",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260824-1",
       "title": "CI Should Treat Agent Tool Failures as Test Failures",
