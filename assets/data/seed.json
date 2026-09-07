@@ -1,6 +1,30 @@
 {
-  "version": "2026-08-31T10:00:00+08:00",
+  "version": "2026-09-07T10:00:00+08:00",
   "blogs": [
+    {
+      "id": "auto-20260907-1",
+      "title": "Debug AI Agents With Execution Trees, Not Longer Logs",
+      "slug": "debug-ai-agents-with-execution-trees-not-longer-logs",
+      "excerpt": "AI agent failures are easier to debug when each tool call becomes a small execution tree with state, evidence, and a clear stop point.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">The latest wave of AI agent work is pushing teams toward more tools, more autonomy, and much longer logs. That sounds useful until the first confusing failure. A coding agent edits the right file, runs the wrong command, ignores a timeout, retries with stale context, and then summarizes the run as mostly successful. The transcript has every detail, but nobody can see the shape of the mistake.</p>\n<p>For production software teams, the next useful improvement is not simply better prompts. It is a better debugging model. Treat every agent run as an execution tree: a goal at the root, decisions as branches, tool calls as nodes, and evidence attached where it was observed.</p>\n<h2>Linear Logs Hide Branches</h2>\n<p>Traditional logs are chronological. That works for simple scripts, but agents behave more like small planners. They inspect, choose, act, evaluate, and sometimes revise the plan. When that is flattened into a single stream, two important facts disappear: why a branch was chosen and which later action depended on it.</p>\n<ul>\n  <li>A failed install can still influence later code generation.</li>\n  <li>A stale file read can become the basis for a confident patch.</li>\n  <li>A retry can hide the first error that actually mattered.</li>\n  <li>A skipped test can be reported next to unrelated successful checks.</li>\n  <li>A human approval can be separated from the exact action it approved.</li>\n</ul>\n<p>An execution tree keeps those relationships visible. The point is not to store more text. The point is to store causality.</p>\n<h2>Make Each Node Small</h2>\n<p>A useful node should answer four boring questions: what was attempted, what evidence was used, what changed, and what happened next. If a node cannot answer those, it is probably too broad. “Fix authentication” is not a node. “Read auth middleware,” “add expired-token test,” and “run focused test command” are nodes.</p>\n<pre><code>{\n  \"goal\": \"add expired token handling\",\n  \"nodes\": [\n    {\"id\": \"read-auth\", \"action\": \"read\", \"evidence\": [\"src/auth.ts\"]},\n    {\"id\": \"patch-test\", \"action\": \"write\", \"depends_on\": [\"read-auth\"]},\n    {\"id\": \"run-test\", \"action\": \"exec\", \"exit_code\": 1, \"depends_on\": [\"patch-test\"]}\n  ]\n}\n</code></pre>\n<p>This format is intentionally plain. A JSON object, a few identifiers, and explicit dependencies are enough to make a failed run easier to inspect.</p>\n<h2>Attach Evidence Where It Appears</h2>\n<p>Agents often fail because evidence moves around. A command output appears early, a summary compresses it later, and the final answer drops the uncomfortable line. Execution trees make evidence local. The node that read a file stores the path and timestamp. The node that ran a command stores the exit code. The node that changed code stores the diff or file list.</p>\n<p>This helps reviewers ask sharper questions. Did the patch depend on a successful test or only on a generated assumption? Did the agent see the current schema before editing the API? Did it continue after a permission error? These are engineering questions, not model personality questions.</p>\n<h2>Stop on Broken Dependencies</h2>\n<p>The most valuable rule is also the simplest: if a required parent node fails, child nodes should not pretend the world is fine. A failed migration check should block deployment advice. A missing file should block refactoring claims. A denied tool call should become a visible stop point, not a paragraph of optimism.</p>\n<p>This does not require a large platform. Start by asking agents to record a tiny run tree for risky tasks. CI can later verify that required nodes exist and that their exit codes are clean. Human reviewers can scan the tree before reading the full transcript.</p>\n<h2>Use Trees to Improve Prompts</h2>\n<p>Once failures are shaped as trees, prompt improvements become concrete. If branches are too large, ask for smaller steps. If nodes lack evidence, require source paths. If failed parents keep producing child actions, add a hard stop rule. The debugging loop moves from vibes to structure.</p>\n<p>AI agents will keep getting more capable, but capability without traceability is hard to operate. Execution trees give teams a cheap way to see what happened, why it happened, and where trust should stop. Longer logs give you more words. A tree gives you a map.</p>",
+      "category": "ai",
+      "tags": [
+        "AI Agents",
+        "Debugging",
+        "Observability",
+        "Developer Tools"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-09-07",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-09-07",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260831-1",
       "title": "Use AI Coding Gaps to Improve the System Around the Code",
