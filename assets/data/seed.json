@@ -1,6 +1,30 @@
 {
-  "version": "2026-09-07T10:00:00+08:00",
+  "version": "2026-09-14T10:00:00+08:00",
   "blogs": [
+    {
+      "id": "auto-20260914-1",
+      "title": "Treat AI Coding Like Pairing, Not Autopilot",
+      "slug": "treat-ai-coding-like-pairing-not-autopilot",
+      "excerpt": "AI coding works best when developers keep ownership: small tasks, fast checks, narrow permissions, and reviewable diffs.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">This week&apos;s dev.to conversations were full of strong opinions about AI coding: agents as loops, vibe coding, generated tests, and whether AI is already better than most developers. The useful signal is not the argument about who is better. It is the workflow question: when does AI reduce engineering risk, and when does it simply hide it until production?</p>\n<p>The answer I keep coming back to is boring: treat AI like a fast pair, not an autopilot. A pair can draft, search, compare, and challenge. A pair does not own the repository, merge without review, or redefine done because the log sounded confident.</p>\n<h2>Start With The Smallest Reversible Task</h2>\n<p>Good AI-assisted work starts with a task that has a clear boundary. “Refactor the checkout service” is too wide. “Extract the duplicate currency formatter and keep the snapshots green” is workable. The smaller task gives the model less room to invent context, and gives the developer a clean diff to inspect.</p>\n<ul>\n<li>Ask for one change at a time.</li>\n<li>Prefer deletion, renaming, and local edits before new abstractions.</li>\n<li>Keep generated code inside files you already understand.</li>\n<li>Stop the run when the diff becomes hard to explain.</li>\n</ul>\n<p>This is not about slowing down. It is about keeping the unit of trust small enough that speed remains useful.</p>\n<h2>Make The Check Cheaper Than The Conversation</h2>\n<p>The fastest way to waste time with an AI coding tool is to debate whether it is right when a command could answer. Every useful agent loop needs a cheap verification step: a unit test, a type check, a linter, a smoke command, or even a tiny script. Without that, the model is rewarded for sounding done.</p>\n<pre><code>python -m pytest tests/test_invoice_totals.py\npython -m compileall app\nnpm run typecheck -- --pretty false</code></pre>\n<p>Generated tests deserve the same suspicion as generated implementation code. A test that only confirms the model&apos;s patch is not a guardrail; it is a rubber stamp. Keep at least one assertion tied to the real bug, the real contract, or the real user-visible behavior.</p>\n<h2>Use Permissions As Design, Not Theater</h2>\n<p>Many teams add AI guardrails as policy documents, then give the tool broad filesystem access, full network access, and a vague goal. That is backwards. Permissions are part of the design. If the task is local, disable network. If the task is documentation, do not expose secrets. If the task is a migration, require a human checkpoint before applying it.</p>\n<p>A practical setup is simple: read broadly, write narrowly, execute known checks, and ask before touching deployment, credentials, or data. Those boundaries make the model more useful because failure modes become smaller and easier to recover from.</p>\n<h2>Review The Story, Not Just The Patch</h2>\n<p>A clean diff is necessary, but it is not enough. The developer still needs to reconstruct the story: what assumption changed, what evidence supports it, and what was deliberately not fixed. If the explanation is hand-wavy, the work is not ready. If the patch is bigger than the story, split it.</p>\n<p>The best AI coding workflow feels almost disappointingly normal. Pick a small task. Generate a small diff. Run a real check. Review the result. Commit only what you can explain. That does not make the AI less powerful. It keeps the engineer in the loop where judgment actually matters.</p>",
+      "category": "AI Engineering",
+      "tags": [
+        "AI",
+        "Software Engineering",
+        "Developer Workflow",
+        "Testing"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-09-14",
+      "read_time": "4 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-09-14",
+      "readTime": "4 min read"
+    },
     {
       "id": "auto-20260907-1",
       "title": "Debug AI Agents With Execution Trees, Not Longer Logs",
