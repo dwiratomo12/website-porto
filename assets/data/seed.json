@@ -1,6 +1,30 @@
 {
-  "version": "2026-09-14T10:00:00+08:00",
+  "version": "2026-09-21T10:00:00+08:00",
   "blogs": [
+    {
+      "id": "auto-20260921-1",
+      "title": "Design API Performance Tests Around Real Traffic, Not Uniform Load",
+      "slug": "design-api-performance-tests-around-real-traffic",
+      "excerpt": "Load tests fail when they model flat, uniform traffic. Reproduce real spikes, contention, and latency percentiles to catch what production actually throws at your API.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead\">Most API load tests pass in staging and fail in production for the same reason: they model traffic as a flat, uniform wave. Real traffic is spiky, skewed, and unevenly distributed. A handful of endpoints carry most of the load, a single slow query can stall everything behind it, and latency problems rarely surface until concurrency crosses a specific threshold. A realistic performance test is less about hitting a high number and more about reproducing the shape of the traffic your API will actually see.</p>\n<h2>Model The Traffic You Already Have</h2>\n<p>Before writing a single test, look at production. Which endpoints receive the most requests? Where do the p50 and p99 latencies sit today? What do your busiest five minutes of the day look like? If you have access logs or an APM dashboard, mine them for a weighted mix of endpoints instead of guessing an even split.</p>\n<ul>\n<li>Weight endpoints by their real share of traffic, not by their count.</li>\n<li>Include the slowest 5% of requests in the mix, not just the happy path.</li>\n<li>Replay the shape of a real burst: a ramp, a sustained peak, and a decay.</li>\n<li>Run against the same region and network path as your production callers.</li>\n</ul>\n<h2>Test Under Contention, Not Just Throughput</h2>\n<p>Throughput is easy to flatter. A benchmark that hammers one read-only endpoint with a single connection pool can report thousands of requests per second while hiding the problem that matters. Production failures are usually about contention: a lock, a shared connection pool, a hot row in the database, or a downstream service that starts queueing. Design at least one scenario that mixes reads and writes, and one that forces concurrency onto a shared resource.</p>\n<pre><code>export const options = {\n  scenarios: {\n    realistic: {\n      executor: 'ramping-arrival-rate',\n      startRate: 50, timeUnit: '1s',\n      preAllocatedVUs: 20, maxVUs: 250,\n      stages: [\n        { duration: '2m', target: 200 },\n        { duration: '5m', target: 320 },\n        { duration: '2m', target: 60 },\n      ],\n    },\n  },\n};</code></pre>\n<p>This is a k6 arrival-rate profile that ramps users like a real traffic spike instead of running a constant loop. Arrival rate keeps the load honest: it models the rate at which requests arrive, not how many iterations a fixed pool can chew through.</p>\n<h2>Make Latency Percentiles The Contract</h2>\n<p>An average latency number is a lie you tell yourself in a dashboard. Averages hide the long tail, and the long tail is exactly where angry users live. Set pass/fail thresholds on percentiles: p50 for the typical experience, p95 for the annoying experience, and p99 for the something-is-breaking experience. Fail the test when a percentile budget is blown, not when a single average tips over.</p>\n<p>Attach these thresholds to the same assertions your CI already runs. A performance regression that fails the build gets fixed while the change is still small, instead of being discovered by an incident at 2 a.m. Performance is a contract, and contracts need a number attached to them.</p>",
+      "category": "DevOps",
+      "tags": [
+        "API",
+        "Performance",
+        "Testing",
+        "DevOps"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-09-21",
+      "read_time": "5 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-09-21",
+      "readTime": "5 min read"
+    },
     {
       "id": "auto-20260914-1",
       "title": "Treat AI Coding Like Pairing, Not Autopilot",
