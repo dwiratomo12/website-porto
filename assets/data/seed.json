@@ -1,6 +1,30 @@
 {
-  "version": "2026-09-21T10:00:00+08:00",
+  "version": "2026-09-28T10:02:05.050910+08:00",
   "blogs": [
+    {
+      "id": "auto-20260928-1",
+      "title": "Derive Runtime Validation From Your Types, Not Beside Them",
+      "slug": "derive-runtime-validation-from-your-types-not-beside-them",
+      "excerpt": "Hand-written type guards drift the moment the type changes. Derive validation from one schema so compile-time and runtime always agree.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" /><p class=\"lead\">TypeScript gives you confidence at compile time, but the moment data crosses a boundary — a JSON response, a form payload, a webhook — your types are only a promise. To trust that data at runtime, teams add hand-written type guards. The problem is that those guards are a second, parallel copy of the truth, and parallel copies drift.</p><h2>The Drift Starts Small</h2><p>Type guards drift one field at a time. Someone renames a property, widens a union, or makes a field optional, and the type updates while the guard keeps checking the old shape. The compiler stays quiet because the guard just returns a boolean; nothing forces it to stay in sync with the interface it claims to describe.</p><ul><li>The type changes, the guard does not, and invalid data slips past.</li><li>The guard changes, the type does not, and valid data gets rejected.</li><li>Error messages describe a shape the system no longer uses.</li><li>Two engineers maintain the same contract in two different files.</li></ul><h2>Make Validation the Single Source of Truth</h2><p>The fix is to invert the relationship: derive the type from the schema, not the other way around. A schema library like Zod, Valibot, or ArkType describes the shape once and produces both the runtime validator and the static type from the same definition.</p><pre><code>import { z } from \"zod\";\n\nconst UserSchema = z.object({\n  id: z.string().uuid(),\n  email: z.string().email(),\n  role: z.enum([\"admin\", \"member\"]),\n});\n\ntype User = z.infer&lt;typeof UserSchema&gt;;\n\nconst user = UserSchema.parse(await response.json());</code></pre><p>This is the whole trick. When the schema changes, the type and the validator change together, because there is only one definition. The drift disappears because there is no second copy to fall out of step.</p><h2>When a Schema Library Feels Too Heavy</h2><p>For a tiny boundary, a full schema library can feel like overhead, and that is a fair objection. The discipline matters more than the dependency. If you must write guards by hand, keep them next to the type they describe and add a compile-time assertion that both still agree. Better yet, pull the shared shape into one exported schema that both the validator and the type reference.</p><p>The goal is not to eliminate hand-written validation everywhere. It is to stop maintaining the same contract in two places and hoping they match. A single source of truth is cheaper to change, easier to review, and far less likely to surprise you at 2 a.m. when a bad payload arrives from a client you have never met.</p>",
+      "category": "TypeScript",
+      "tags": [
+        "TypeScript",
+        "Type Safety",
+        "Validation",
+        "Software Engineering"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-09-28",
+      "read_time": "5 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-09-28",
+      "readTime": "5 min read"
+    },
     {
       "id": "auto-20260921-1",
       "title": "Design API Performance Tests Around Real Traffic, Not Uniform Load",
