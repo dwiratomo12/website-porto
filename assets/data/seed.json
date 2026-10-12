@@ -1,6 +1,30 @@
 {
-  "version": "2026-09-28T10:02:05.050910+08:00",
+  "version": "2026-10-12T14:56:48.525273+08:00",
   "blogs": [
+    {
+      "id": "auto-20261012-1",
+      "title": "When the Client Leaves, Stop the Work — Cancellation in Node.js",
+      "slug": "when-the-client-leaves-stop-the-work-cancellation-in-nodejs",
+      "excerpt": "A disconnected client doesn't stop your server's work. Propagate abort signals so abandoned requests stop burning CPU, database, and connection-pool capacity.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" /><p class=\"lead\">Every Node.js server eventually learns the same lesson: a client that disconnects does not stop the work your handler already started. The browser canceled, the mobile app dropped to background, the retry budget ran out — and your server keeps running the query, the upstream fetch, and the report build anyway, for a response nobody will ever read.</p><h2>A Disconnect Is Not a Cancel Signal</h2><p>When a request arrives, your handler launches asynchronous work. The inbound <code>req</code> object knows when the socket closes and emits a <code>close</code> event, but nothing about that event reaches the work already in flight. If your handler is awaiting a database query or an HTTP call, that promise keeps resolving into the void.</p><ul><li>The response stream has no listener left, so every write is wasted.</li><li>The database keeps scanning rows nobody will consume.</li><li>An upstream call holds a connection-pool slot for nothing.</li><li>Under load, thousands of abandoned requests quietly stack up.</li></ul><h2>Thread the Signal Through the Whole Call</h2><p>The fix is to treat cancellation as part of the call signature, not an afterthought. Node's <code>AbortController</code> gives you a signal you can pass to <code>fetch</code>, to database drivers, and to your own loops. The moment the client leaves, every downstream consumer hears about it.</p><pre><code>import http from \"node:http\";\n\nconst server = http.createServer((req, res) => {\n  const controller = new AbortController();\n\n  // When the client goes away, tell everyone downstream to stop.\n  req.on(\"close\", () => controller.abort());\n\n  fetch(\"https://api.internal/pricing\", { signal: controller.signal })\n    .then((r) => r.json())\n    .then((data) => res.end(JSON.stringify(data)))\n    .catch((err) => {\n      if (controller.signal.aborted) return; // client left, nothing to do\n      console.error(err);\n      res.statusCode = 500;\n      res.end();\n    });\n});</code></pre><h2>Reach the Slowest Link, Not Just the Fetch</h2><p>Passing a signal to <code>fetch</code> is the easy part. The expensive work usually lives elsewhere: the database query, the queue consumer, the file upload. Check whether your drivers accept an abort signal, and if they do not, gate the work yourself by checking the signal before and after the slow call.</p><ul><li>Pass <code>signal</code> to Postgres and Redis drivers that support it.</li><li>Check <code>signal.aborted</code> before starting a CPU-bound loop.</li><li>Break batch work into chunks that re-check the signal between items.</li><li>Log cancellations separately from real errors so alerts stay honest.</li></ul><h2>Make Cancellation Visible</h2><p>Canceled work deserves its own metric, not a disguised 500. If you cannot tell how many requests you abandon each minute, you cannot tell whether a noisy neighbor or a buggy client is wasting your capacity. Track aborted requests, skipped queries, and freed connection-pool slots, and treat a rising cancellation rate as a signal worth investigating.</p><p>Cancellation is a contract that runs through the entire stack. The client cancels, the signal travels, and every layer stops doing work that no longer matters. It is one of the cheapest reliability wins available: a few signals and a <code>close</code> listener can save real CPU, real database load, and real money — before the load balancer even notices anything was wrong.</p>",
+      "category": "Node.js",
+      "tags": [
+        "Node.js",
+        "Backend",
+        "Performance",
+        "Software Engineering"
+      ],
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-10-12",
+      "read_time": "5 min read",
+      "featured": true,
+      "cover_image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=630&fit=crop",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "publishDate": "2026-10-12",
+      "readTime": "5 min read"
+    },
     {
       "id": "auto-20260928-1",
       "title": "Derive Runtime Validation From Your Types, Not Beside Them",
