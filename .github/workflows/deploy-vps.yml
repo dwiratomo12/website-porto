@@ -30,6 +30,9 @@ jobs:
           script: |
             set -e
 
+            # Trust the deploy directory (fixes "dubious ownership" when dir owner != SSH user)
+            git config --global --add safe.directory "${{ secrets.VPS_APP_PATH }}"
+
             cd "${{ secrets.VPS_APP_PATH }}"
 
             if [ ! -d .git ]; then
