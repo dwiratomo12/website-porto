@@ -1,6 +1,31 @@
 {
-  "version": "2026-10-26T02:01:13.663627Z",
+  "version": "2026-11-05T03:52:32.181942+00:00",
   "blogs": [
+    {
+      "id": "auto-20261105-1",
+      "title": "Beyond Type Assertions: Safe Runtime Type Narrowing in Modern TypeScript",
+      "slug": "beyond-type-assertions-safe-runtime-type-narrowing-typescript",
+      "excerpt": "Ditch risky 'as' casting. Learn how user-defined type guards, Discriminated Unions, and schema-driven contracts eliminate runtime crashes.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p>TypeScript’s static analysis is a developer superpower, but it lives entirely at compile time. Once your code compiles down to vanilla JavaScript and runs in production, type definitions vanish completely. When untyped external data enters your system—from third-party REST endpoints, browser storage, WebSockets, or user input—relying on the <code>as</code> operator is a recipe for silent bugs and runtime exceptions.</p>\n\n<h2>The False Comfort of Type Assertions</h2>\n<p>Too often, developers treat type assertions as a quick escape hatch when compiler errors surface. Writing <code>const payload = response.data as UserProfile;</code> tells TypeScript to shut up and trust you. However, you haven't actually proven that the incoming object matches the shape of <code>UserProfile</code>.</p>\n<p>If the API updates its contract, renames a key, or returns <code>null</code> during partial outages, your code will promptly crash downstream with the dreaded <code>TypeError: Cannot read properties of undefined</code>. Assertions do not validate; they merely silence safety checks.</p>\n\n<h2>Custom Type Predicates: The Pragmatic Bridge</h2>\n<p>To safely bridge dynamic runtime payloads into TypeScript's strict static realm without introducing massive third-party dependencies, user-defined type guards (using the <code>is</code> operator) offer surgical precision:</p>\n\n<pre><code>interface UserProfile {\n  id: string;\n  email: string;\n  role: \"admin\" | \"member\";\n  preferences?: {\n    theme: \"light\" | \"dark\";\n  };\n}\n\nfunction isUserProfile(value: unknown): value is UserProfile {\n  if (typeof value !== \"object\" || value === null) {\n    return false;\n  }\n\n  const candidate = value as Record<string, unknown>;\n\n  const hasValidRole =\n    candidate.role === \"admin\" || candidate.role === \"member\";\n\n  return (\n    typeof candidate.id === \"string\" &&\n    typeof candidate.email === \"string\" &&\n    candidate.email.includes(\"@\") &&\n    hasValidRole\n  );\n}\n\n// Usage:\nconst rawInput: unknown = JSON.parse(incomingJson);\n\nif (isUserProfile(rawInput)) {\n  // Inside this block, TypeScript automatically narrows rawInput to UserProfile\n  console.log(`Authenticated: ${rawInput.email} [${rawInput.role}]`);\n} else {\n  throw new Error(\"Invalid payload: schema mismatch\");\n}</code></pre>\n\n<p>By enforcing this boundary check, TypeScript's control flow analysis guarantees type safety within the conditional branch, preventing invalid data from permeating your domain logic.</p>\n\n<h2>Strategic Patterns for Robust Type Narrowing</h2>\n<p>Writing individual predicate functions works cleanly for small projects, but scaling complex architectures requires structured boundary defenses. Consider adopting these architectural patterns across your codebase:</p>\n\n<ul>\n  <li><strong>Discriminated Unions:</strong> Include a literal tag (e.g. <code>status: 'success' | 'error'</code> or <code>kind: 'circle' | 'square'</code>) across polymorphic events to enable zero-overhead exhaustiveness checks.</li>\n  <li><strong>Parse, Don't Validate:</strong> Transition incoming untrusted structures into explicit domain models at the system perimeter rather than scattering ad-hoc checks throughout your UI layer.</li>\n  <li><strong>Exhaustive Switch Checking:</strong> Leverage TypeScript's <code>never</code> type in default branches to fail at compile-time whenever new union members are added without corresponding handlers.</li>\n  <li><strong>Boundary-Only Schema Engines:</strong> If you leverage validation libraries like Zod or Valibot, keep them strictly at network and storage boundaries to preserve lightweight internal types.</li>\n</ul>\n\n<h2>Conclusion</h2>\n<p>TypeScript’s greatest strength is peace of mind, but that peace evaporates when assertions bypass runtime reality. By replacing blunt <code>as</code> casts with predicates and boundary validation, you build resilient applications that fail predictably at boundaries rather than catastrophically in production.</p>",
+      "category": "TypeScript",
+      "tags": [
+        "TypeScript",
+        "Frontend",
+        "JavaScript",
+        "Software Architecture",
+        "Clean Code"
+      ],
+      "cover_image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&h=630&fit=crop",
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-11-05",
+      "publishDate": "2026-11-05",
+      "read_time": "6 min read",
+      "readTime": "6 min read",
+      "featured": true
+    },
     {
       "id": "auto-20261026-1",
       "title": "Why CI/CD Pipelines Refuse to Run: Taming Flaky Workflows and Ephemeral Runners",
