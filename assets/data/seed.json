@@ -1,6 +1,30 @@
 {
-  "version": "2026-11-05T03:52:32.181942+00:00",
+  "version": "2026-11-09T02:01:14.423419+00:00",
   "blogs": [
+    {
+      "id": "auto-20261109-1",
+      "title": "Why Natural Language Prompts Fail Coding Agents: The Case for Executable Contracts",
+      "slug": "executable-contracts-over-prompts-coding-agents",
+      "excerpt": "Why massive markdown prompt instructions degrade coding agents over time, and how deterministic validation scripts create self-correcting development loops.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead text-lg text-gray-300 mb-6\">As autonomous coding agents and LLM-assisted workflows integrate directly into CI/CD pipelines, engineering teams often encounter a common scaling trap: inflating markdown prompt files with dozens of behavioral rules. Yet as prompt context grows, adherence degrades. Replacing prose guidelines with executable contracts provides the deterministic feedback agents actually need to succeed.</p>\n\n<h2 class=\"text-2xl font-bold text-white mt-8 mb-4\">The Context Saturation Dilemma</h2>\n<p class=\"text-gray-300 mb-4\">When developers instruct an AI agent, the instinctive reaction to mistakes is writing another guideline into <code>AGENTS.md</code> or <code>PROMPT.md</code>. Over weeks of iterations, these instruction files balloon into sprawling documents. Large language models inevitably suffer from attention dispersion across thousands of tokens of instructions, leading to hallucinated assumptions or selective amnesia regarding non-functional requirements.</p>\n\n<p class=\"text-gray-300 mb-4\">Prose is inherently ambiguous. An instruction stating \"always write comprehensive error handling\" means entirely different things depending on whether the task involves a throwaway script or a core payment gateway. Without a machine-verifiable definition of success, the agent produces variations that pass human glances but crumble in production environments.</p>\n\n<h2 class=\"text-2xl font-bold text-white mt-8 mb-4\">Shifting from Prompts to Executable Validation</h2>\n<p class=\"text-gray-300 mb-4\">A far more robust architecture treats the agent not as an all-knowing architect, but as an iterative search worker guided by deterministic guardrails. Instead of spending 500 tokens describing desired formatting, import conventions, and test expectations in English, developers should equip the agent with executable validation scripts.</p>\n\n<ul class=\"list-disc list-inside space-y-2 text-gray-300 mb-6\">\n  <li><strong class=\"text-white\">Strict Boundary Linters:</strong> Automated AST checks that catch architectural boundary violations before any diff is committed.</li>\n  <li><strong class=\"text-white\">Zero-Config Smoke Scripts:</strong> Single-command verification runs (such as <code>./test/verify-spec.sh</code>) that execute in seconds.</li>\n  <li><strong class=\"text-white\">Contract-First Invariants:</strong> Assertions written as runnable test fixtures rather than speculative prompt advice.</li>\n</ul>\n\n<h2 class=\"text-2xl font-bold text-white mt-8 mb-4\">Implementing Runnable Guardrails</h2>\n<p class=\"text-gray-300 mb-4\">Consider an agent tasked with modifying an internal API client. Rather than detailing every forbidden dependency in system instructions, embed a minimal contract test directly in the workspace:</p>\n\n<pre class=\"bg-dark-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6\"><code>import subprocess\nimport sys\n\ndef verify_agent_deliverable():\n    # 1. Type check\n    tsc = subprocess.run([\"npx\", \"tsc\", \"--noEmit\"], capture_output=True, text=True)\n    assert tsc.returncode == 0, f\"TypeScript checks failed:\n{tsc.stdout}\"\n\n    # 2. Schema snapshot validation\n    schema_check = subprocess.run([\"npm\", \"run\", \"validate:schema\"], capture_output=True, text=True)\n    assert schema_check.returncode == 0, f\"Schema contract drift detected:\n{schema_check.stderr}\"\n\n    print(\"All architectural contracts satisfied.\")\n\nif __name__ == \"__main__\":\n    try:\n        verify_agent_deliverable()\n    except AssertionError as err:\n        sys.exit(str(err))\n</code></pre>\n\n<p class=\"text-gray-300 mb-6\">When the agent executes this script and encounters a failure, the resulting standard error provides an exact, grounded feedback loop. The agent self-corrects against concrete compiler errors rather than guessing against fuzzy natural-language advice. By replacing descriptive prompts with prescriptive verification scripts, teams turn unpredictable AI output into dependable software engineering.</p>",
+      "category": "DevOps & Tooling",
+      "tags": [
+        "AI",
+        "DevOps",
+        "Automation",
+        "Software Architecture"
+      ],
+      "cover_image": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop",
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-11-09",
+      "publishDate": "2026-11-09",
+      "read_time": "5 min read",
+      "readTime": "5 min read",
+      "featured": true
+    },
     {
       "id": "auto-20261105-1",
       "title": "Beyond Type Assertions: Safe Runtime Type Narrowing in Modern TypeScript",
