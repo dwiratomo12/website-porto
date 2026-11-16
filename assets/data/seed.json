@@ -1,6 +1,31 @@
 {
-  "version": "2026-11-09T02:01:14.423419+00:00",
+  "version": "2026-11-16T02:01:15.821265+00:00",
   "blogs": [
+    {
+      "id": "auto-20261116-1",
+      "title": "Your MCP Servers Are Silently Draining the Context Window",
+      "slug": "mcp-servers-silently-draining-context-window",
+      "excerpt": "Every extra tool your agent exposes costs tokens before a single turn runs. Here's how to scope, deduplicate, and cache MCP tool schemas.",
+      "content": "<img src=\"https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&h=630&fit=crop\" alt=\"Cover\" class=\"w-full rounded-lg mb-6\" />\n<p class=\"lead text-lg text-gray-300 mb-6\">The Model Context Protocol made it trivial to plug tools into an agent. The problem is that trivial became automatic: developers wire in a filesystem server, a browser server, a database server, a search server, and a dozen internal APIs, then wonder why the model keeps losing the plot. The cost is paid up front, in tokens, before the agent does anything useful.</p>\n\n<h2 class=\"text-2xl font-bold text-white mt-8 mb-4\">The Tax You Pay on Every Turn</h2>\n<p class=\"text-gray-300 mb-4\">Every tool an MCP server exposes has a schema: a name, a description, and a JSON shape for its arguments. The agent does not read these on demand. It ingests all of them into its context on every request, because it cannot know which tool it will need until it has seen what is available.</p>\n<p class=\"text-gray-300 mb-4\">That means a server exposing forty tools quietly inserts thousands of tokens into your prompt before a single message is written. The description text, the argument enumerations, the examples — all of it competes with your actual task for the model's attention. Worse, it compounds: as the context fills, the model's ability to pick the right tool degrades, so it reaches for the wrong one, and the loop gets longer and more expensive.</p>\n\n<h2 class=\"text-2xl font-bold text-white mt-8 mb-4\">Scope Tools to the Task, Not the Capability</h2>\n<p class=\"text-gray-300 mb-4\">The fix is not to abandon MCP. It is to treat tool exposure as a budget you allocate deliberately. An agent that only needs to read files should not receive a filesystem server with write and delete operations. A task that reads one database table should not inherit the schema for the entire catalog.</p>\n<ul class=\"list-disc list-inside space-y-2 text-gray-300 mb-6\">\n  <li><strong class=\"text-white\">Whitelist per session:</strong> mount only the servers the current task actually uses, and nothing else.</li>\n  <li><strong class=\"text-white\">Trim the tool surface:</strong> prefer narrow, single-purpose tools over kitchen-sink servers.</li>\n  <li><strong class=\"text-white\">Shorten descriptions:</strong> a one-line summary beats a paragraph; the model reads every word, so every word must earn its place.</li>\n  <li><strong class=\"text-white\">Deduplicate overlap:</strong> if three servers each expose a <code>search</code> tool, consolidate to one.</li>\n</ul>\n\n<h2 class=\"text-2xl font-bold text-white mt-8 mb-4\">Cache the Static Schema</h2>\n<p class=\"text-gray-300 mb-4\">Tool schemas change rarely, but a naive integration re-serializes and re-injects them on every call. A simple caching layer can cut the recurring cost dramatically. Here is a minimal pattern that keeps the schema payload out of the hot path:</p>\n\n<pre class=\"bg-dark-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6\"><code>const schemaCache = new Map&lt;string, string&gt;();\n\nasync function getToolSchemas(serverNames: string[]) {\n  const parts: string[] = [];\n  for (const name of serverNames) {\n    if (schemaCache.has(name)) {\n      parts.push(schemaCache.get(name)!);\n      continue;\n    }\n    const schema = await fetchSchemaFromServer(name);\n    schemaCache.set(name, schema);\n    parts.push(schema);\n  }\n  return parts.join(\"\\n\");\n}\n\n// Inject only once per server, not once per turn.\nconst tools = await getToolSchemas([\"files:readonly\", \"db:readonly\"]);</code></pre>\n\n<p class=\"text-gray-300 mb-6\">By separating the static schema from the dynamic request, you stop re-paying the ingestion cost on every turn and give the model a cleaner, smaller decision surface. Context engineering is not an optimization for later; it is the difference between an agent that reasons clearly and one that drowns in its own tooling.</p>",
+      "category": "AI Engineering",
+      "tags": [
+        "AI",
+        "MCP",
+        "LLM",
+        "Context Engineering",
+        "Developer Tools"
+      ],
+      "cover_image": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&h=630&fit=crop",
+      "coverImage": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&h=630&fit=crop",
+      "cover_gradient": "from-primary-900/40 to-dark-800",
+      "coverGradient": "from-primary-900/40 to-dark-800",
+      "author": "Dwi Ratomo",
+      "publish_date": "2026-11-16",
+      "publishDate": "2026-11-16",
+      "read_time": "5 min read",
+      "readTime": "5 min read",
+      "featured": true
+    },
     {
       "id": "auto-20261109-1",
       "title": "Why Natural Language Prompts Fail Coding Agents: The Case for Executable Contracts",
